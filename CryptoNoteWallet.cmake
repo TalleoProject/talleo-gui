@@ -1,4 +1,4 @@
-set(CN_PROJECT_NAME "BittoriumWallet")
-set(CN_CURRENCY_DISPLAY_NAME "Bittorium")
-set(CN_CURRENCY_TICKER "BTOR")
+set(CN_PROJECT_NAME "TalleoWallet")
+set(CN_CURRENCY_DISPLAY_NAME "Talleo")
+set(CN_CURRENCY_TICKER "TLO")
 set(CN_VERSION "1.0.0")

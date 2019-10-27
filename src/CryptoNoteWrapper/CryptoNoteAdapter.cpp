@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// COpyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -35,7 +36,7 @@ namespace WalletGui {
 namespace {
 
 const int AUTO_CONNECTION_INTERVAL = 1000;
-const char OLD_CORE_LOG_FILE_NAME[] = "BittoriumWallet.log";
+const char OLD_CORE_LOG_FILE_NAME[] = "TalleoWallet.log";
 
 }
 
@@ -109,7 +110,7 @@ bool CryptoNoteAdapter::isValidPaymentId(const QString& _paymentId) const {
 }
 
 QString CryptoNoteAdapter::getCurrencyTicker() const {
-  return "BTOR";
+  return CryptoNote::CRYPTONOTE_TICKER;
 }
 
 size_t CryptoNoteAdapter::getDecimalPlaces() const {

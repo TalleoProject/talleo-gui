@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
-// Copyright (c) 2018, The Bittorium developers 
+// Copyright (c) 2018, The Bittorium developers
+// COpyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -35,8 +36,8 @@ namespace WalletGui {
 
 namespace {
 
-const char BLOG_RSS_SCHEME[] = "http";
-const char BLOG_RSS_HOST[] = "https://bitcointalk.org/index.php?topic=5028348";
+const char BLOG_RSS_SCHEME[] = "https";
+const char BLOG_RSS_HOST[] = "www.talleo.org";
 const char BLOG_RSS_PATH[] = "/feed/";
 
 const char BLOG_RSS_ID_TAG_NAME[] = "guid";
@@ -59,7 +60,7 @@ BlogReader::~BlogReader() {
 }
 
 QString BlogReader::getName() const {
-  return tr("Bittorium Blog:");
+  return tr("Talleo Blog:");
 }
 
 QPixmap BlogReader::getIcon() const {

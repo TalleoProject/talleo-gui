@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -62,7 +63,7 @@ namespace WalletGui {
 namespace {
 
 const int MAX_RECENT_WALLET_COUNT = 10;
-const char COMMUNITY_FORUM_URL[] = "https://discord.gg/aMF2vUF";
+const char COMMUNITY_FORUM_URL[] = "https://discord.gg/aysnp8P";
 const char REPORT_ISSUE_URL[] = "https://bitcointalk.org/index.php?topic=5028348";
 
 const char DONATION_URL_DONATION_TAG[] = "donation";
@@ -117,7 +118,7 @@ MainWindow::MainWindow(ICryptoNoteAdapter* _cryptoNoteAdapter, IAddressBookManag
   m_addRecipientAction(new QAction(this)), m_styleSheetTemplate(_styleSheetTemplate), m_walletStateMapper(new QDataWidgetMapper(this)),
   m_syncMovie(new QMovie(Settings::instance().getCurrentStyle().getWalletSyncGifFile(), QByteArray(), this)) {
   m_ui->setupUi(this);
-  setWindowTitle(tr("Bittorium Wallet %1").arg(Settings::instance().getVersion()));
+  setWindowTitle(tr("Talleo Wallet %1").arg(Settings::instance().getVersion()));
   m_addRecipientAction->setObjectName("m_addRecipientAction");
   m_cryptoNoteAdapter->addObserver(this);
   m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->addObserver(this);

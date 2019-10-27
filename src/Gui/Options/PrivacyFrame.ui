@@ -71,14 +71,14 @@
       <item>
        <widget class="QCheckBox" name="m_newsCheck">
         <property name="text">
-         <string>I want to see Bittorium Blog feeds</string>
+         <string>I want to see Talleo Blog feeds</string>
         </property>
        </widget>
       </item>
       <item alignment="Qt::AlignTop">
        <widget class="WalletGui::WalletSmallGrayTextLabel" name="m_embeddedHelperLabel">
         <property name="text">
-         <string>Checking this box will result in updated Overview screen. It will now show you the latest posts of Bittorium Blog providing you with fresh Bittorium news.</string>
+         <string>Checking this box will result in updated Overview screen. It will now show you the latest posts of Talleo Blog providing you with fresh Talleo news.</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

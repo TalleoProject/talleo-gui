@@ -20,6 +20,7 @@
 #include <QLinearGradient>
 #include <QPainter>
 
+#include "CryptoNoteConfig.h"
 #include "TransactionsAmountDelegate.h"
 #include "Settings/Settings.h"
 #include "Models/TransactionsModel.h"
@@ -29,7 +30,7 @@ namespace WalletGui {
 
 namespace {
 
-const int AMOUNT_DECIMAL_COUNT = 2;
+const int AMOUNT_DECIMAL_COUNT = CryptoNote::parameters::CRYPTONOTE_DISPLAY_DECIMAL_POINT;
 
 }
 

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Talleo Wallet
+Comment=Talleo wallet
+Exec=TalleoWallet %U
+Terminal=false
+Type=Application
+Icon=Talleo
+MimeType=x-scheme-handler/Talleo;
+Categories=Office;Finance;

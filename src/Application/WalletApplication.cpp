@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018-2019, The Bittorium developers
+// COpyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -61,7 +62,7 @@ namespace WalletGui {
 
 namespace {
 
-const char BYTECOIN_URI_SCHEME_NAME[] = "Bittorium";
+const char BYTECOIN_URI_SCHEME_NAME[] = "Talleo";
 const QRegularExpression LOG_SPLASH_REG_EXP("\\[Core\\] Imported block with index");
 
 quint16 findPort() {
@@ -112,7 +113,7 @@ WalletApplication::WalletApplication(int& _argc, char** _argv) : QApplication(_a
       && !qEnvironmentVariableIsSet("QT_SCREEN_SCALE_FACTORS")) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   }
-  setApplicationName("BittoriumWallet");
+  setApplicationName("TalleoWallet");
   setApplicationVersion(Settings::instance().getVersion());
   setQuitOnLastWindowClosed(false);
   setStyle(QStyleFactory::create("fusion"));
@@ -148,7 +149,7 @@ bool WalletApplication::init() {
   makeDataDir();
   WalletLogger::init(Settings::instance().getDataDir(), Settings::instance().hasDebugOption(), this);
   WalletLogger::info(tr("[Application] Initializing..."));
-  m_lockFile = new QLockFile(Settings::instance().getDataDir().absoluteFilePath("BittoriumWallet.lock"));
+  m_lockFile = new QLockFile(Settings::instance().getDataDir().absoluteFilePath("TalleoWallet.lock"));
   QUrl paymentUrl = QUrl::fromUserInput(arguments().last());
   if (paymentUrl.scheme() != BYTECOIN_URI_SCHEME_NAME) {
     paymentUrl = QUrl();
@@ -160,9 +161,9 @@ bool WalletApplication::init() {
   }
 #endif
   if (!m_lockFile->tryLock()) {
-    WalletLogger::warning(tr("[Application] Bittorium wallet already running"));
+    WalletLogger::warning(tr("[Application] Talleo wallet already running"));
     if (!paymentUrl.isValid()) {
-      QMessageBox::warning(nullptr, QObject::tr("Fail"), "Bittorium wallet already running");
+      QMessageBox::warning(nullptr, QObject::tr("Fail"), "Talleo wallet already running");
     }
 
     return false;
@@ -270,9 +271,9 @@ bool WalletApplication::initCryptoNoteAdapter() {
       okButton->setText(QObject::tr("Ok"));
       dlg.addButton(okButton, QMessageBox::AcceptRole);
       dlg.setText(QObject::tr("The database is currently used by another application or service.\n"
-      "If you have Bittoriumd with non-default RPC port, you should terminate it and relaunch BittoriumWallet\n"
+      "If you have Talleod with non-default RPC port, you should terminate it and relaunch TalleoWallet\n"
       "or\n"
-      "Set the Local daemon required port in BittoriumWallet Menu/Preferences/Connection settings."));
+      "Set the Local daemon required port in TalleoWallet Menu/Preferences/Connection settings."));
 	  if (m_splash != nullptr)
 		  m_splash->hide();
       dlg.exec();

@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -66,7 +67,7 @@ const char OPTION_CLOSE_TO_TRAY[] = "closeToTray";
 const char OPTION_PRIVACY_PARAMS[] = "privacyParams";
 const char OPTION_PRIVACY_NEWS_ENABLED[] = "newsEnabled";
 
-const char DEFAULT_WALLET_FILE_NAME[] = "Bittorium.wallet";
+const char DEFAULT_WALLET_FILE_NAME[] = "Talleo.wallet";
 const quint64 DEFAULT_OPTIMIZATION_PERIOD = 1000 * 60 * 30; // 30 minutes
 const quint64 DEFAULT_OPTIMIZATION_THRESHOLD = 10000000000000;
 const quint64 DEFAULT_OPTIMIZATION_MIXIN = 6;
@@ -84,8 +85,7 @@ Settings& Settings::instance() {
 
 
 Settings::Settings() : m_p2pBindPort(0), m_cmdLineParser(nullptr) {
-  m_defaultPoolList << "poolmining.be:3333";
-  m_defaultPoolList << "pool.raasu.org:3333";
+  m_defaultPoolList << "pool.talleo.org:3333";
 
   Style* lightStyle = new LightStyle();
   Style* darkStyle = new DarkStyle();
@@ -110,7 +110,7 @@ void Settings::setCommandLineParser(CommandLineParser* _cmdLineParser) {
 }
 
 void Settings::init() {
-  QFile cfgFile(getDataDir().absoluteFilePath("BittoriumWallet.cfg"));
+  QFile cfgFile(getDataDir().absoluteFilePath("TalleoWallet.cfg"));
   if (cfgFile.open(QIODevice::ReadOnly)) {
     m_settings = QJsonDocument::fromJson(cfgFile.readAll()).object();
     cfgFile.close();
@@ -470,7 +470,7 @@ bool Settings::isStartOnLoginEnabled() const {
     return false;
   }
 
-  QString autorunFilePath = autorunDir.absoluteFilePath("BittoriumWallet.plist");
+  QString autorunFilePath = autorunDir.absoluteFilePath("TalleoWallet.plist");
   if (!QFile::exists(autorunFilePath)) {
     return false;
   }
@@ -488,12 +488,12 @@ bool Settings::isStartOnLoginEnabled() const {
     return false;
   }
 
-  QString autorunFilePath = autorunDir.absoluteFilePath("BittoriumWallet.desktop");
+  QString autorunFilePath = autorunDir.absoluteFilePath("TalleoWallet.desktop");
   res = QFile::exists(autorunFilePath);
 #elif defined(Q_OS_WIN)
   QSettings autorunSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-  res = autorunSettings.contains("BittoriumWallet") &&
-    !QDir::fromNativeSeparators(autorunSettings.value("BittoriumWallet").toString().split(' ')[0]).compare(QCoreApplication::applicationFilePath());
+  res = autorunSettings.contains("TalleoWallet") &&
+    !QDir::fromNativeSeparators(autorunSettings.value("TalleoWallet").toString().split(' ')[0]).compare(QCoreApplication::applicationFilePath());
 #endif
   return res;
 }
@@ -656,10 +656,10 @@ void Settings::setStartOnLoginEnabled(bool _enable) {
       return;
     }
 
-    QString autorunFilePath = autorunDir.absoluteFilePath("BittoriumWallet.plist");
+    QString autorunFilePath = autorunDir.absoluteFilePath("TalleoWallet.plist");
     QSettings autorunSettings(autorunFilePath, QSettings::NativeFormat);
     autorunSettings.remove("Program");
-    autorunSettings.setValue("Label", "org.Bittorium.BittoriumWallet");
+    autorunSettings.setValue("Label", "org.Talleo.TalleoWallet");
     autorunSettings.setValue("ProgramArguments", QVariantList() << QCoreApplication::applicationFilePath() << "--minimized");
     autorunSettings.setValue("RunAtLoad", _enable);
     autorunSettings.setValue("ProcessType", "InterActive");
@@ -678,7 +678,7 @@ void Settings::setStartOnLoginEnabled(bool _enable) {
       return;
     }
 
-    QString autorunFilePath = autorunDir.absoluteFilePath("BittoriumWallet.desktop");
+    QString autorunFilePath = autorunDir.absoluteFilePath("TalleoWallet.desktop");
     QFile autorunFile(autorunFilePath);
     if (!autorunFile.open(QFile::WriteOnly | QFile::Truncate)) {
       return;
@@ -687,7 +687,7 @@ void Settings::setStartOnLoginEnabled(bool _enable) {
     if (_enable) {
       autorunFile.write("[Desktop Entry]\n");
       autorunFile.write("Type=Application\n");
-      autorunFile.write("Name=Bittorium Wallet\n");
+      autorunFile.write("Name=Talleo Wallet\n");
       autorunFile.write(QString("Exec=%1 --minimized\n").arg(QCoreApplication::applicationFilePath()).toLocal8Bit());
       autorunFile.write("Terminal=false\n");
       autorunFile.write("Hidden=false\n");
@@ -699,9 +699,9 @@ void Settings::setStartOnLoginEnabled(bool _enable) {
     QSettings autorunSettings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
     if (_enable) {
       QString appPath = QString("%1 --minimized").arg(QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
-      autorunSettings.setValue("BittoriumWallet", appPath);
+      autorunSettings.setValue("TalleoWallet", appPath);
     } else {
-      autorunSettings.remove("BittoriumWallet");
+      autorunSettings.remove("TalleoWallet");
     }
 #endif
   }
@@ -936,19 +936,19 @@ void Settings::removeObserver(ISettingsObserver* _settingsObserver) {
 #ifdef Q_OS_WIN
 void Settings::setUrlHandler() {
   QWriteLocker lock(&m_lock);
-  QSettings protocolSettings("HKEY_CURRENT_USER\\Software\\Classes\\Bittorium", QSettings::NativeFormat);
-  protocolSettings.setValue(".", "URL:Bittorium");
+  QSettings protocolSettings("HKEY_CURRENT_USER\\Software\\Classes\\Talleo", QSettings::NativeFormat);
+  protocolSettings.setValue(".", "URL:Talleo");
   protocolSettings.setValue("URL Protocol", "");
-  QSettings iconSettings("HKEY_CURRENT_USER\\Software\\Classes\\Bittorium\\DefaultIcon", QSettings::NativeFormat);
+  QSettings iconSettings("HKEY_CURRENT_USER\\Software\\Classes\\Talleo\\DefaultIcon", QSettings::NativeFormat);
   iconSettings.setValue(".", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
-  QSettings openSettings("HKEY_CURRENT_USER\\Software\\Classes\\Bittorium\\shell\\open\\command", QSettings::NativeFormat);
+  QSettings openSettings("HKEY_CURRENT_USER\\Software\\Classes\\Talleo\\shell\\open\\command", QSettings::NativeFormat);
   QString commandString("\"%1\" \"%2\"");
   openSettings.setValue(".", commandString.arg(QDir::toNativeSeparators(QCoreApplication::applicationFilePath())).arg("%1"));
 }
 #endif
 
 void Settings::saveSettings() const {
-  QFile cfgFile(QDir(m_cmdLineParser->getDataDir()).absoluteFilePath("BittoriumWallet.cfg"));
+  QFile cfgFile(QDir(m_cmdLineParser->getDataDir()).absoluteFilePath("TalleoWallet.cfg"));
   if (cfgFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
     QJsonDocument cfg_doc(m_settings);
     cfgFile.write(cfg_doc.toJson());

@@ -78,8 +78,9 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/Common/VectorOutputStream.cpp
   cryptonote/src/Common/ScopeExit.cpp
   cryptonote/src/ConnectivityTool/ConnectivityTool.cpp
+  cryptonote/src/crypto/aesb.c
   cryptonote/src/crypto/blake256.c
-  cryptonote/src/crypto/chacha8.c
+  cryptonote/src/crypto/chacha8.cpp
   cryptonote/src/crypto/crypto-ops-data.c
   cryptonote/src/crypto/crypto-ops.c
   cryptonote/src/crypto/crypto.cpp
@@ -94,8 +95,8 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/crypto/oaes_lib.c
   cryptonote/src/crypto/random.c
   cryptonote/src/crypto/skein.c
-  cryptonote/src/crypto/slow-hash.c
-  cryptonote/src/crypto/slow-hash.cpp
+  cryptonote/src/crypto/slow-hash-portable.c
+  cryptonote/src/crypto/slow-hash-x86.c
   cryptonote/src/crypto/tree-hash.c
   cryptonote/src/CryptoNoteCore/*.cpp
   cryptonote/src/CryptoNoteProtocol/*.cpp
@@ -171,7 +172,7 @@ if (WIN32)
 
   set(PLATFORM_DIR Windows)
   set(BUILD_PLATFORM WIN32)
-  set(BUILD_RESOURCES src/BittoriumWallet.rc)
+  set(BUILD_RESOURCES src/TalleoWallet.rc)
   set(QTMAIN Qt5::WinMain)
 
 elseif (UNIX)

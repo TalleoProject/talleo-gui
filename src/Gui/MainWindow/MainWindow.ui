@@ -33,7 +33,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>:/images/pinkstarcoin</normaloff>:/images/pinkstarcoin</iconset>
+    <normaloff>:/images/talleo</normaloff>:/images/talleo</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -620,7 +620,7 @@
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
-            <string>SEND BITTORIUM</string>
+            <string>SEND TALLEO</string>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -920,7 +920,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>About Bittorium</string>
+    <string>About Talleo</string>
    </property>
   </action>
   <action name="m_aboutQtAction">

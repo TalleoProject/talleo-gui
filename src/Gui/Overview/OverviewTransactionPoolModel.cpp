@@ -19,6 +19,7 @@
 
 #include <QFont>
 
+#include "CryptoNoteConfig.h"
 #include "OverviewTransactionPoolModel.h"
 #include "Settings/Settings.h"
 #include "ICryptoNoteAdapter.h"
@@ -29,7 +30,7 @@ namespace WalletGui {
 
 namespace {
 
-const int AMOUNT_DECIMAL_COUNT = 2;
+const int AMOUNT_DECIMAL_COUNT = CryptoNote::parameters::CRYPTONOTE_DISPLAY_DECIMAL_POINT;
 
 }
 

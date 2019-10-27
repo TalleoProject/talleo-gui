@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// COpyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -43,7 +44,7 @@ const quint32 BYTECOIN_BLOCK_SIZE = 0xd5;
 }
 
 BlockchainInstaller::BlockchainInstaller(QObject* _parent) : QObject(_parent), m_blockIndexesFileName("blockindexes.dat"), m_blocksFileName("blocks.dat"),
-  m_BittoriumDir(Settings::instance().getDataDir().absolutePath()), m_applicationDir(QDir::current()) {
+  m_TalleoDir(Settings::instance().getDataDir().absolutePath()), m_applicationDir(QDir::current()) {
 }
 
 BlockchainInstaller::~BlockchainInstaller() {
@@ -54,20 +55,20 @@ void BlockchainInstaller::exec() {
     return;
   }
 
-  if (!checkIfBittoriumBlockchainExists()) {
+  if (!checkIfTalleoBlockchainExists()) {
     installBlockchain();
     return;
   }
 
   quint64 currentHeight;
-  quint64 BittoriumHeight;
-  if (!checkIfBlockchainOutdated(currentHeight, BittoriumHeight)) {
+  quint64 TalleoHeight;
+  if (!checkIfBlockchainOutdated(currentHeight, TalleoHeight)) {
     return;
   }
 
   QString questionStringTemplate = tr("Would you like to replace your current blockchain (height: %1)\nwith the one in your GUI wallet folder (height: %2)?");
 
-  QuestionDialog dlg(tr("Blockchain installation"), QString(questionStringTemplate).arg(BittoriumHeight).arg(currentHeight), nullptr);
+  QuestionDialog dlg(tr("Blockchain installation"), QString(questionStringTemplate).arg(TalleoHeight).arg(currentHeight), nullptr);
   if (dlg.exec() == QDialog::Accepted) {
     installBlockchain();
   }
@@ -116,15 +117,15 @@ bool BlockchainInstaller::getGenesisBlockFromBlockchain(char** _genesisBlockData
   return true;
 }
 
-bool BlockchainInstaller::checkIfBittoriumBlockchainExists() const {
-  return m_BittoriumDir.exists() && m_BittoriumDir.exists(m_blocksFileName);
+bool BlockchainInstaller::checkIfTalleoBlockchainExists() const {
+  return m_TalleoDir.exists() && m_TalleoDir.exists(m_blocksFileName);
 }
 
 bool BlockchainInstaller::checkIfBlockchainOutdated(quint64& _sourceHeight, quint64& _targetHeight) const {
   quint32 sourceHeight(0);
   quint32 targetHeight(0);
   QFile sourceBlockIndexesFile(m_applicationDir.absoluteFilePath(m_blockIndexesFileName));
-  QFile targetBlockIndexesFile(m_BittoriumDir.absoluteFilePath(m_blockIndexesFileName));
+  QFile targetBlockIndexesFile(m_TalleoDir.absoluteFilePath(m_blockIndexesFileName));
   if (!sourceBlockIndexesFile.open(QIODevice::ReadOnly) || !targetBlockIndexesFile.open(QIODevice::ReadOnly)) {
     return false;
   }
@@ -144,8 +145,8 @@ QFileInfo BlockchainInstaller::currentBlockchainInfo() const {
   return QFileInfo(m_applicationDir.absoluteFilePath(m_blocksFileName));
 }
 
-QFileInfo BlockchainInstaller::BittoriumBlockchainInfo() const {
-  return QFileInfo(m_BittoriumDir.absoluteFilePath(m_blocksFileName));
+QFileInfo BlockchainInstaller::TalleoBlockchainInfo() const {
+  return QFileInfo(m_TalleoDir.absoluteFilePath(m_blocksFileName));
 }
 
 void BlockchainInstaller::copyProgress(quint64 _copied, quint64 _total) {
@@ -154,7 +155,7 @@ void BlockchainInstaller::copyProgress(quint64 _copied, quint64 _total) {
 
 void BlockchainInstaller::installBlockchain() {
   Q_EMIT showMessageSignal(tr("Copying blockchain files..."));
-  m_BittoriumDir.mkpath(".");
+  m_TalleoDir.mkpath(".");
   QThread workerThread;
   AsyncFileProcessor fp;
   fp.moveToThread(&workerThread);
@@ -166,14 +167,14 @@ void BlockchainInstaller::installBlockchain() {
   connect(&fp, &AsyncFileProcessor::errorSignal, &waitLoop, &QEventLoop::exit);
 
   Q_EMIT copyFileSignal(m_applicationDir.absoluteFilePath(m_blockIndexesFileName),
-    m_BittoriumDir.absoluteFilePath(m_blockIndexesFileName));
+    m_TalleoDir.absoluteFilePath(m_blockIndexesFileName));
   if (waitLoop.exec() != 0) {
     workerThread.quit();
     workerThread.wait();
     return;
   }
 
-  Q_EMIT copyFileSignal(m_applicationDir.absoluteFilePath(m_blocksFileName), m_BittoriumDir.absoluteFilePath(m_blocksFileName));
+  Q_EMIT copyFileSignal(m_applicationDir.absoluteFilePath(m_blocksFileName), m_TalleoDir.absoluteFilePath(m_blocksFileName));
   if (waitLoop.exec() != 0) {
     workerThread.quit();
     workerThread.wait();

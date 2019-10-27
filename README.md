@@ -1,19 +1,19 @@
-## About Bittorium
+## About Talleo
 
-Bittorium is a cryptocurrency with the aim to become a worldwide accepted payment method with enhanced privacy and maintaining decentralisation.
+Talleo is a cryptocurrency with the aim to become a worldwide accepted payment method with enhanced privacy and maintaining decentralisation.
 
-You can read more about it at https://bitcointalk.org/index.php?topic=5028348
+You can read more about it at https://bitcointalk.org/index.php?topic=5195073
 
-## About Bittorium-gui
+## About Talleo-gui
 
-This is a multi-platform GUI wallet for Bittorium.
+This is a multi-platform GUI wallet for Talleo.
 
-## Building Bittorium-gui
+## Building Talleo-gui
 
 ### 1. Clone wallet sources
 
 ```
-git clone git@github.com/bittorium/Bittorium-GUI-SOURCE
+git clone git@github.com/TalleoProject/talleo-gui
 ```
 
 ### 2. Update git submodules
@@ -83,35 +83,35 @@ Dependencies: [linuxdeployqt](https://github.com/probonopd/linuxdeployqt/release
 ```
 rm -rf build/appimage
 mkdir build/appimage
-cp src/Bittorium.desktop build/appimage
-cp src/images/Bittorium.png build/appimage
-cp build/BittoriumWallet build/appimage
+cp src/Talleo.desktop build/appimage
+cp src/images/Talleo.png build/appimage
+cp build/TalleoWallet build/appimage
 cd build/appimage
-linuxdeployqt-continuous-x86_64.AppImage Bittorium.desktop -appimage -verbose=2 -always-overwrite -no-translations
-mv Bittorium_Wallet-x86_64.AppImage ..
+linuxdeployqt-continuous-x86_64.AppImage Talleo.desktop -appimage -verbose=2 -always-overwrite -no-translations
+mv Talleo_Wallet-x86_64.AppImage ..
 ```
 
 ##### On OS X
 
 ```
-./macdeployqt Bittorium.app -dmg
+./macdeployqt Talleo.app -dmg
 ```
 
 ##### On Windows
 
 ```
-windeployqt.exe BittoriumWallet.exe
+windeployqt.exe TalleoWallet.exe
 ```
 
 ## Community and support
 
 You can find us at:
 
-[Discord](https://discord.gg/aMF2vUF)
+[Discord](https://discord.gg/aysnp8P)
 
 ## License
 
-Bittorium-gui is licensed under the GNU Lesser General Public License v3.0
+Talleo-gui is licensed under the GNU Lesser General Public License v3.0
 
 ## Credits
 
