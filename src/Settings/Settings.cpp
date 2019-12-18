@@ -74,7 +74,7 @@ const quint64 DEFAULT_OPTIMIZATION_MIXIN = 6;
 
 const quint64 VERSION_MAJOR = 2;
 const quint64 VERSION_MINOR = 0;
-const quint64 VERSION_PATCH = 5;
+const quint64 VERSION_PATCH = 6;
 
 }
 
@@ -86,6 +86,9 @@ Settings& Settings::instance() {
 
 Settings::Settings() : m_p2pBindPort(0), m_cmdLineParser(nullptr) {
   m_defaultPoolList << "pool.talleo.org:3333";
+  m_defaultPoolList << "tlo-pool.raasu.org:13333";
+  m_defaultPoolList << "tlo.cryptonote.club:3333";
+  m_defaultPoolList << "funwithcrypto.tk:3339";
 
   Style* lightStyle = new LightStyle();
   Style* darkStyle = new DarkStyle();

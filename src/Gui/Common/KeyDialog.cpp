@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2019, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -22,6 +23,9 @@
 
 #include "KeyDialog.h"
 #include "IWalletAdapter.h"
+#include "Common/StringTools.h"
+#include "CryptoNoteCore/Account.h"
+#include "Mnemonics/electrum-words.h"
 #include "Settings/Settings.h"
 #include "Style/Style.h"
 #include "ui_KeyDialog.h"
@@ -89,9 +93,28 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKe
 	m_ui->m_fileButton->setText(tr("Save to file"));
 	m_ui->m_okButton->setText(tr("Close"));
 	m_ui->m_keyEdit->setReadOnly(true);
-	m_ui->m_keyEdit->setPlainText("Secret spend key:\n" + m_key.toHex().toUpper().mid(0,64) + "\n\nSecret view key:\n" + m_key.toHex().toUpper().mid(64));
+	QString secretSpendKey = m_key.toHex().toUpper().mid(0,64);
+	QString secretViewKey = m_key.toHex().toUpper().mid(64);
+	QString keys = "Secret spend key:\n" + secretSpendKey + "\n\nSecret view key:\n" + secretViewKey;
+	//
+	Crypto::SecretKey privateSpendKey, privateViewKey;
+	if (Common::podFromHex(secretSpendKey.toStdString(), privateSpendKey) && Common::podFromHex(secretViewKey.toStdString(), privateViewKey)) {
+		Crypto::SecretKey derivedPrivateViewKey;
+
+		CryptoNote::AccountBase::generateViewFromSpend(privateSpendKey, derivedPrivateViewKey);
+
+		if (derivedPrivateViewKey == privateViewKey) {
+			std::string mnemonicSeed;
+
+			crypto::ElectrumWords::bytes_to_words(privateSpendKey, mnemonicSeed, "English");
+
+			keys += "\n\nMnemonic seed:\n" + QString::fromStdString(mnemonicSeed);
+		}
+	}
+	//
+	m_ui->m_keyEdit->setPlainText(keys);
 	if (_isPrivateKeyExport) {
-		m_ui->m_descriptionLabel->setText(tr("These keys allow restoration of your wallet in new wallet software version 1.4.2 and above."));
+		m_ui->m_descriptionLabel->setText(tr("These keys allow restoration of your wallet in simplewallet."));
 	}
 
 	m_ui->m_cancelButton->hide();

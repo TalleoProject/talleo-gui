@@ -104,6 +104,7 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/InProcessNode/InProcessNode.cpp
   cryptonote/src/InProcessNode/InProcessNodeErrors.cpp
   cryptonote/src/Logging/*.cpp
+  cryptonote/src/Mnemonics/*.cpp
   cryptonote/src/NodeRpcProxy/NodeErrors.cpp
   cryptonote/src/NodeRpcProxy/NodeRpcProxy.cpp
   cryptonote/src/P2p/*.cpp

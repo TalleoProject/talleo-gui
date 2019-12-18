@@ -831,6 +831,7 @@
     <addaction name="m_importKeyAction"/>
     <addaction name="m_exportKeyAction"/>
     <addaction name="m_exportTrackingKeyAction"/>
+    <addaction name="m_exportPrivateKeysAction"/>
     <addaction name="m_exitAction"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -858,7 +859,7 @@
     </property>
     <addaction name="m_communityForumAction"/>
     <addaction name="m_reportIssueAction"/>
-    <addaction name="m_aboutBitoriumAction"/>
+    <addaction name="m_aboutTalleoAction"/>
     <addaction name="m_aboutQtAction"/>
    </widget>
    <addaction name="menuFile"/>
@@ -915,7 +916,7 @@
     <string>Change password</string>
    </property>
   </action>
-  <action name="m_aboutBitoriumAction">
+  <action name="m_aboutTalleoAction">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -1015,6 +1016,11 @@
    </property>
    <property name="toolTip">
     <string>Export key</string>
+   </property>
+  </action>
+  <action name="m_exportPrivateKeysAction">
+   <property name="text">
+    <string>Export private keys</string>
    </property>
   </action>
  </widget>
@@ -1188,7 +1194,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_aboutBitoriumAction</sender>
+   <sender>m_aboutTalleoAction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>about()</slot>
@@ -1496,6 +1502,22 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>exportKey()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>636</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_exportPrivateKeysAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>exportPrivateKeys()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
