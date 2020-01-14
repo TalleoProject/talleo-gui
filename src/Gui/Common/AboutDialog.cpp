@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -31,6 +32,7 @@ AboutDialog::AboutDialog(QWidget* _parent) : QDialog(_parent, static_cast<Qt::Wi
 
   QString aboutText = m_ui->m_aboutLabel->text();
   m_ui->m_aboutLabel->setText(aboutText.arg(Settings::instance().getVersion()).arg(GIT_REVISION).
+    arg(QDateTime::currentDateTime().date().year()).
     arg(QDateTime::currentDateTime().date().year()));
 }
 
