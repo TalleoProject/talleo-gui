@@ -107,5 +107,5 @@ private:
 Q_SIGNALS:
   void showTransactionsFrameSignal();
 };
-  
+
 }

@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)	
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 	QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 #endif
 

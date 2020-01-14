@@ -70,7 +70,7 @@ private:
   Q_INVOKABLE void loadWallet(const QString& _password);
   Q_INVOKABLE void loadLegacyKeys(const QString& _password);
   void setPasswordError(bool _isErrorOccured);
-  
+
   Q_SLOT void okClicked();
   Q_SLOT void passwordChanged(const QString& _password);
 
