@@ -153,7 +153,11 @@ QJsonValue JsonRpcServer::processJsonValue(const QJsonValue& _request) {
 
 void JsonRpcServer::sendError(QTcpSocket* _socket, int _errorCode, const QString& _errorMessage, const QString& _errorData) {
   JsonRpcResponse errorResponse;
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   errorResponse.setId(QString::null);
+#else
+  errorResponse.setId(QString());
+#endif
   errorResponse.setError(_errorCode, _errorMessage, _errorData);
   sendObject(_socket, errorResponse);
 }

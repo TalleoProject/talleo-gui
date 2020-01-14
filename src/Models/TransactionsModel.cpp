@@ -445,7 +445,11 @@ QVariant TransactionsModel::getDecorationRoleData(const QModelIndex &_index) con
     }
 
     QPixmap pixmap;
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     if (!QPixmapCache::find(file, pixmap)) {
+#else
+    if (!QPixmapCache::find(file, &pixmap)) {
+#endif
       pixmap.load(file);
       QPixmapCache::insert(file, pixmap);
     }
