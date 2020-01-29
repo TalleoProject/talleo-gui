@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019, The Talleo developers
+// Copyright (c) 2019-2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -74,7 +74,7 @@ const quint64 DEFAULT_OPTIMIZATION_MIXIN = 6;
 
 const quint64 VERSION_MAJOR = 2;
 const quint64 VERSION_MINOR = 0;
-const quint64 VERSION_PATCH = 6;
+const quint64 VERSION_PATCH = 7;
 
 }
 
@@ -86,7 +86,7 @@ Settings& Settings::instance() {
 
 Settings::Settings() : m_p2pBindPort(0), m_cmdLineParser(nullptr) {
   m_defaultPoolList << "pool.talleo.org:3333";
-  m_defaultPoolList << "tlo-pool.raasu.org:13333";
+  m_defaultPoolList << "pool.raasu.org:3333";
   m_defaultPoolList << "tlo.cryptonote.club:3333";
   m_defaultPoolList << "funwithcrypto.tk:3339";
 
