@@ -240,7 +240,7 @@ void WalletStatusBar::updateStatusDescription() {
   QDateTime lastLocalBlockTimestamp = QDateTime::fromTime_t(m_nodeStateModel->index(0, NodeStateModel::COLUMN_LAST_LOCAL_BLOCK_TIMESTAMP).data(NodeStateModel::ROLE_LAST_LOCAL_BLOCK_TIMESTAMP).value<quint64>()).toUTC();
   quintptr peerCount = m_nodeStateModel->index(0, NodeStateModel::COLUMN_PEER_COUNT).data(NodeStateModel::ROLE_PEER_COUNT).value<quintptr>();
   QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
-  quint64 timeDiff = lastLocalBlockTimestamp.msecsTo(currentDateTime);
+  qint64 timeDiff = lastLocalBlockTimestamp.msecsTo(currentDateTime);
   QString warningString;
   if (timeDiff > MSECS_IN_HOUR) {
     warningString.append(QString(" Warning: last block was received %1 hours %2 minutes ago.").
