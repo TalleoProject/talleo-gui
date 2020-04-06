@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -180,7 +181,7 @@ void FilteredBlockModel::resetFilter() {
 }
 
 bool FilteredBlockModel::filterAcceptsRow(int _sourceRow, const QModelIndex &_sourceParent) const {
-  return !_sourceParent.isValid() && _sourceRow >= m_beginHeight && _sourceRow <= m_endHeight;
+  return !_sourceParent.isValid() && _sourceRow >= (int)m_beginHeight && _sourceRow <= (int)m_endHeight;
 }
 
 }

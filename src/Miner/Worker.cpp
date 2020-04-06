@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -99,7 +100,7 @@ void Worker::run() {
     bool alternateObserverExists = !m_alternateJob.jobId.isEmpty();
     if (m_alternateProbability == 0 || !alternateObserverExists) {
       mainJobMiningRound(localJob, localNonce, hash);
-    } else if (qrand() % 100 < m_alternateProbability) {
+    } else if (qrand() % 100 < (int)m_alternateProbability) {
       alternateJobMiningRound(localJob, localNonce, hash);
     } else {
       mainJobMiningRound(localJob, localNonce, hash);

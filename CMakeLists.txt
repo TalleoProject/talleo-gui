@@ -44,7 +44,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 set(VERSION "")
 configure_file("cryptonote/src/version.h.in" "version.h")
 configure_file("src/CryptoNoteWalletConfig.h.in" "CryptoNoteWalletConfig.h")
-
+configure_file("src/CryptoNoteWalletVersion.h.in" "CryptoNoteWalletVersion.h")
 add_definitions(-DGIT_REVISION="${GIT_REVISION}")
 
 set(CMAKE_AUTOMOC ON)
@@ -99,7 +99,6 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/crypto/tree-hash.c
   cryptonote/src/CryptoNoteCore/*.cpp
   cryptonote/src/CryptoNoteProtocol/*.cpp
-  cryptonote/src/Daemon/*.cpp
   cryptonote/src/HTTP/*.cpp
   cryptonote/src/InProcessNode/InProcessNode.cpp
   cryptonote/src/InProcessNode/InProcessNodeErrors.cpp
@@ -134,7 +133,6 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/JsonRpcServer/*.cpp
   cryptonote/src/PaymentGate/*.cpp
   cryptonote/src/PaymentGateService/*.cpp
-  cryptonote/src/Miner/*.cpp
 )
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
@@ -198,8 +196,8 @@ elseif (UNIX)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -maes -D_DARWIN_C_SOURCE")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework OpenGL -framework CoreFoundation -framework Carbon -framework IOKit -L/usr/lib")
 
-    set(MACOSX_BUNDLE_ICON_FILE cryptonote.icns)
-    set(APPLICATION_ICON src/images/cryptonote.icns)
+    set(MACOSX_BUNDLE_ICON_FILE Talleo.icns)
+    set(APPLICATION_ICON src/images/Talleo.icns)
     set_source_files_properties(${APPLICATION_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 
     set(BUILD_PLATFORM MACOSX_BUNDLE)

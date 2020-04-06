@@ -33,6 +33,7 @@
 #include <CryptoNoteConfig.h>
 
 #include "Settings.h"
+#include "CryptoNoteWalletVersion.h"
 #include "Application/CommandLineParser.h"
 #include "Style/LightStyle.h"
 #include "Style/DarkStyle.h"
@@ -71,10 +72,6 @@ const char DEFAULT_WALLET_FILE_NAME[] = "Talleo.wallet";
 const quint64 DEFAULT_OPTIMIZATION_PERIOD = 1000 * 60 * 30; // 30 minutes
 const quint64 DEFAULT_OPTIMIZATION_THRESHOLD = 10000000000000;
 const quint64 DEFAULT_OPTIMIZATION_MIXIN = 6;
-
-const quint64 VERSION_MAJOR = 2;
-const quint64 VERSION_MINOR = 0;
-const quint64 VERSION_PATCH = 7;
 
 }
 
@@ -430,7 +427,7 @@ bool Settings::isEncrypted() const {
 
 QString Settings::getVersion() const {
   QReadLocker lock(&m_lock);
-  return QString("%1.%2.%3").arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(VERSION_PATCH);
+  return QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_REV);
 }
 
 QString Settings::getCurrentTheme() const {

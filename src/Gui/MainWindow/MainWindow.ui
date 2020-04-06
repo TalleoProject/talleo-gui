@@ -815,13 +815,21 @@
      <x>0</x>
      <y>0</y>
      <width>1273</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export...</string>
+     </property>
+     <addaction name="m_exportKeyAction"/>
+     <addaction name="m_exportTrackingKeyAction"/>
+     <addaction name="m_exportPrivateKeysAction"/>
+    </widget>
     <addaction name="m_createWalletAction"/>
     <addaction name="m_openWalletAction"/>
     <addaction name="m_recentWalletsAction"/>
@@ -829,9 +837,7 @@
     <addaction name="m_saveKeysAction"/>
     <addaction name="m_resetAction"/>
     <addaction name="m_importKeyAction"/>
-    <addaction name="m_exportKeyAction"/>
-    <addaction name="m_exportTrackingKeyAction"/>
-    <addaction name="m_exportPrivateKeysAction"/>
+    <addaction name="menuExport"/>
     <addaction name="m_exitAction"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -976,7 +982,7 @@
   </action>
   <action name="m_exportTrackingKeyAction">
    <property name="text">
-    <string>Export tracking key</string>
+    <string>Tracking key</string>
    </property>
    <property name="toolTip">
     <string>Export tracking key</string>
@@ -1012,7 +1018,7 @@
   </action>
   <action name="m_exportKeyAction">
    <property name="text">
-    <string>Export key</string>
+    <string>Key</string>
    </property>
    <property name="toolTip">
     <string>Export key</string>
@@ -1020,7 +1026,7 @@
   </action>
   <action name="m_exportPrivateKeysAction">
    <property name="text">
-    <string>Export private keys</string>
+    <string>Private keys</string>
    </property>
   </action>
  </widget>

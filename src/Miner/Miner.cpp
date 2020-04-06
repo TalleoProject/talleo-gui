@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -59,7 +60,7 @@ void Miner::start(quint32 _coreCount) {
   }
 
   for (quint32 i = 0; i < _coreCount; ++i) {
-    if (m_workerThreadList.size() < i + 1) {
+    if ((quint32) m_workerThreadList.size() < i + 1) {
       Worker* worker = new Worker(m_mainJob, m_alternateJob, m_mainJobLock, m_alternateJobLock,
         m_mainNonce, m_alternateNonce, m_alternateProbability, m_hashCounter, m_alternameHashCounter, nullptr);
       worker->addObserver(m_mainStratumClient);

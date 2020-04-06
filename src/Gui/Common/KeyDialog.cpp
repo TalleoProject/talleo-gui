@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019, The Talleo developers
+// Copyright (c) 2019-2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -66,6 +66,7 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
   , m_ui(new Ui::KeyDialog)
   , m_isTracking(_isTracking)
   , m_isExport(true)
+  , m_isPrivateKeyExport(false)
   , m_key(_key) {
   m_ui->setupUi(this);
   setWindowTitle(m_isTracking ? tr("Export tracking key") : tr("Export key"));
@@ -73,10 +74,6 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
   m_ui->m_okButton->setText(tr("Close"));
   m_ui->m_keyEdit->setReadOnly(true);
   m_ui->m_keyEdit->setPlainText(m_key.toHex().toUpper());
-  if (m_isTracking) {
-    m_ui->m_descriptionLabel->setText(tr("Tracking key allows other people to see all incoming transactions of this wallet.\n"
-      "It doesn't allow spending your funds."));
-  }
 
   m_ui->m_cancelButton->hide();
   setFixedHeight(195);
@@ -88,9 +85,10 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKe
 	, m_ui(new Ui::KeyDialog)
 	, m_isTracking(_isTracking)
 	, m_isExport(true)
+        , m_isPrivateKeyExport(true)
 	, m_key(_key) {
 	m_ui->setupUi(this);
-	m_ui->m_fileButton->setText(tr("Save to file"));
+	m_ui->m_fileButton->hide();
 	m_ui->m_okButton->setText(tr("Close"));
 	m_ui->m_keyEdit->setReadOnly(true);
 	QString secretSpendKey = m_key.toHex().toUpper().mid(0,64);
@@ -113,9 +111,6 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKe
 	}
 	//
 	m_ui->m_keyEdit->setPlainText(keys);
-	if (_isPrivateKeyExport) {
-		m_ui->m_descriptionLabel->setText(tr("These keys allow restoration of your wallet in simplewallet."));
-	}
 
 	m_ui->m_cancelButton->hide();
 	setFixedHeight(195);
@@ -127,7 +122,8 @@ KeyDialog::KeyDialog(QWidget* _parent)
   : QDialog(_parent, static_cast<Qt::WindowFlags>(Qt::WindowCloseButtonHint))
   , m_ui(new Ui::KeyDialog)
   , m_isTracking(false)
-  , m_isExport(false) {
+  , m_isExport(false)
+  , m_isPrivateKeyExport(false) {
   m_ui->setupUi(this);
   setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
   m_ui->m_fileButton->setText(tr("Load from file"));
@@ -206,12 +202,24 @@ void KeyDialog::fileClicked() {
 
 void KeyDialog::keyChanged() {
   m_isTracking = isTrackingKeys(getKey());
-  setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
-  if (m_isTracking) {
-    m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
-      "It doesn't allow spending funds."));
+  if (m_isExport) {
+    setWindowTitle(m_isTracking ? tr("Export tracking key") : tr("Export key"));
+    if (m_isTracking) {
+      m_ui->m_descriptionLabel->setText(tr("Tracking key allows other people to see all incoming transactions of this wallet.\n"
+        "It doesn't allow spending your funds."));
+    } else if (m_isPrivateKeyExport) {
+      m_ui->m_descriptionLabel->setText(tr("These keys allow restoration of your wallet in simplewallet."));
+    } else {
+      m_ui->m_descriptionLabel->clear();
+    }
   } else {
-    m_ui->m_descriptionLabel->clear();
+    setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
+    if (m_isTracking) {
+      m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
+        "It doesn't allow spending funds."));
+    } else {
+      m_ui->m_descriptionLabel->clear();
+    }
   }
 }
 

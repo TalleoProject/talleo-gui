@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -286,7 +287,7 @@ void BlockChainExplorerWorker::poolUpdated(const std::vector<CryptoNote::Transac
   WalletLogger::debug(tr("[Blockchain explorer] Event: Pool updated, %1 new transactions, %2 removed transactions").
     arg(_newTransactions.size()).arg(_removedTransactions.size()));
   QVector<CryptoNote::TransactionDetails> newTransactions = QVector<CryptoNote::TransactionDetails>::fromStdVector(_newTransactions);
-  QVector<Crypto::Hash> removedTransactions(_removedTransactions.size());
+  QVector<Crypto::Hash> removedTransactions((int)_removedTransactions.size());
   for (quintptr i = 0; i < _removedTransactions.size(); ++i) {
     removedTransactions[i] = _removedTransactions[i].first;
   }

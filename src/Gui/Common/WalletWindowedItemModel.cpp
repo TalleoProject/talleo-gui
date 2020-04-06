@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -56,12 +57,12 @@ bool WalletWindowedItemModel::filterAcceptsRow(int _sourceRow, const QModelIndex
   }
 
   if (m_filterRole == -1) {
-    return _sourceRow >= m_windowBegin && _sourceRow < m_windowBegin + m_windowSize;
+    return _sourceRow >= (int)m_windowBegin && _sourceRow < (int) (m_windowBegin + m_windowSize);
   }
 
   QModelIndex sourceIndex = sourceModel()->index(_sourceRow, 0, _sourceParent);
-  return sourceIndex.data(m_filterRole).toUInt() >= m_windowBegin &&
-    sourceIndex.data(m_filterRole).toUInt() < m_windowBegin + m_windowSize;
+  return sourceIndex.data(m_filterRole).toUInt() >= (int)m_windowBegin &&
+    sourceIndex.data(m_filterRole).toUInt() < (int) (m_windowBegin + m_windowSize);
 }
 
 }

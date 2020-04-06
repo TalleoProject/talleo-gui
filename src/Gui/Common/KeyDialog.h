@@ -44,6 +44,7 @@ private:
   QScopedPointer<Ui::KeyDialog> m_ui;
   bool m_isTracking;
   bool m_isExport;
+  bool m_isPrivateKeyExport;
   QByteArray m_key;
 
   void saveKey();

@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -335,10 +336,10 @@ QVariant BlockchainModel::data(const QModelIndex &_index, int _role) const {
 
 QModelIndex BlockchainModel::index(int _row, int _column, const QModelIndex &_parent) const {
   if(!_parent.isValid()) {
-    return _row > m_lastLocalBlockIndex ? QModelIndex() : createIndex(_row, _column, INVALID_BLOCK_INDEX);
+    return _row > (int)m_lastLocalBlockIndex ? QModelIndex() : createIndex(_row, _column, INVALID_BLOCK_INDEX);
   }
 
-  return _row >= _parent.data(ROLE_BLOCK_TRANSACTION_COUNT).toUInt() ? QModelIndex() :
+  return _row >= (int)_parent.data(ROLE_BLOCK_TRANSACTION_COUNT).toUInt() ? QModelIndex() :
     createIndex(_row, _column, _parent.data(ROLE_BLOCK_HEIGHT).value<quint32>());
 }
 
