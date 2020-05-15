@@ -1,4 +1,5 @@
 // Copyright (c) 2015-2017, The Bytecoin developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -27,7 +28,7 @@ namespace WalletGui {
 
 namespace {
 
-const char PAYMENT_SERVER_NAME[] = "inbestcoin-payment-server-kS5ck6MW7Sk9hdjQsByXs4rtG";
+const char PAYMENT_SERVER_NAME[] = "talleo-payment-server-kS5ck6MW7Sk9hdjQsByXs4rtG";
 
 }
 

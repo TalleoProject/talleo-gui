@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018-2019, The Bittorium developers
-// COpyright (c) 2019, The Talleo developers
+// COpyright (c) 2019-2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -62,7 +62,7 @@ namespace WalletGui {
 
 namespace {
 
-const char BYTECOIN_URI_SCHEME_NAME[] = "Talleo";
+const char BYTECOIN_URI_SCHEME_NAME[] = "talleo";
 const QRegularExpression LOG_SPLASH_REG_EXP("\\[Core\\] Imported block with index");
 
 quint16 findPort() {
@@ -151,6 +151,10 @@ bool WalletApplication::init() {
   WalletLogger::info(tr("[Application] Initializing..."));
   m_lockFile = new QLockFile(Settings::instance().getDataDir().absoluteFilePath("TalleoWallet.lock"));
   QUrl paymentUrl = QUrl::fromUserInput(arguments().last());
+  if (paymentUrl.scheme() == "http" && paymentUrl.path().startsWith(QString(BYTECOIN_URI_SCHEME_NAME) + "//", Qt::CaseInsensitive)) {
+    paymentUrl.setScheme(BYTECOIN_URI_SCHEME_NAME);
+    paymentUrl.setPath(paymentUrl.path().mid(strlen(BYTECOIN_URI_SCHEME_NAME) + 2));
+  }
   if (paymentUrl.scheme() != BYTECOIN_URI_SCHEME_NAME) {
     paymentUrl = QUrl();
   }

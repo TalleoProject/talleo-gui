@@ -937,7 +937,7 @@ void Settings::removeObserver(ISettingsObserver* _settingsObserver) {
 void Settings::setUrlHandler() {
   QWriteLocker lock(&m_lock);
   QSettings protocolSettings("HKEY_CURRENT_USER\\Software\\Classes\\Talleo", QSettings::NativeFormat);
-  protocolSettings.setValue(".", "URL:Talleo");
+  protocolSettings.setValue(".", "URL:talleo");
   protocolSettings.setValue("URL Protocol", "");
   QSettings iconSettings("HKEY_CURRENT_USER\\Software\\Classes\\Talleo\\DefaultIcon", QSettings::NativeFormat);
   iconSettings.setValue(".", QDir::toNativeSeparators(QCoreApplication::applicationFilePath()));
