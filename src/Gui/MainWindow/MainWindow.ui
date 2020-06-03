@@ -426,6 +426,35 @@
         </widget>
        </item>
        <item>
+        <spacer name="horizontalSpacer_12">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="WalletGui::QRLabel" name="m_addressQRLabel">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -1097,6 +1126,11 @@
    <class>WalletGui::WalletStatusBar</class>
    <extends>QStatusBar</extends>
    <header>Gui/MainWindow/WalletStatusBar.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WalletGui::QRLabel</class>
+   <extends>QLabel</extends>
+   <header>Gui/Common/QRLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

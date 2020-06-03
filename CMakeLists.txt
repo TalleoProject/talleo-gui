@@ -8,9 +8,15 @@ WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 OUTPUT_VARIABLE GIT_REVISION)
 
 set(CRYPTONOTE_LIB cryptonote)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cryptonote/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cryptonote/cmake;${CMAKE_CURRENT_SOURCE_DIR}/libqrencode/cmake")
 
-include_directories(${CMAKE_BINARY_DIR}
+set(WITH_TESTS NO)
+set(WITH_TOOLS NO)
+add_subdirectory(libqrencode)
+
+include_directories(
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_BINARY_DIR}
   src
   include
   cryptonote/external
@@ -225,7 +231,7 @@ target_link_libraries(${CRYPTONOTE_LIB} rocksdb ${Boost_LIBRARIES} ${Qt5DBus_LIB
 add_executable(${PROJECT_NAME} ${BUILD_PLATFORM} ${BUILD_RESOURCES} ${SOURCES} ${HEADERS} ${UIS} ${RCC})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS _GNU_SOURCE)
-target_link_libraries(${PROJECT_NAME} rocksdb ${Boost_LIBRARIES} ${QTMAIN} ${CRYPTONOTE_LIB} ${Qt5DBus_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} rocksdb ${Boost_LIBRARIES} ${QTMAIN} ${CRYPTONOTE_LIB} ${Qt5DBus_LIBRARIES} qrencode)
 
 if (APPLE)
   qt5_use_modules(${PROJECT_NAME} PrintSupport)

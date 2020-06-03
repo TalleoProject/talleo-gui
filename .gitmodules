@@ -1,3 +1,7 @@
 [submodule "cryptonote"]
 	path = cryptonote
 	url = https://github.com/TalleoProject/Talleo.git
+[submodule "libqrencode"]
+	path = libqrencode
+	url = https://github.com/mtl1979/libqrencode.git
+	branch = talleo

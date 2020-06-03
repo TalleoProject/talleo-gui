@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -72,6 +73,8 @@ QVariant WalletStateModel::headerData(int _section, Qt::Orientation _orientation
     return tr("Not encrypted");
   case COLUMN_ADDRESS:
     return tr("Address");
+  case COLUMN_ADDRESS_QR:
+    return tr("QR code");
   case COLUMN_ACTUAL_BALANCE:
     return tr("Actual balance");
   case COLUMN_PENDING_BALANCE:
@@ -204,6 +207,7 @@ QVariant WalletStateModel::getDisplayRole(const QModelIndex& _index) const {
   case COLUMN_IS_NOT_ENCRYPTED:
     return !_index.data(ROLE_IS_ENCRYPTED).toBool();
   case COLUMN_ADDRESS:
+  case COLUMN_ADDRESS_QR:
     return _index.data(ROLE_ADDRESS);
   case COLUMN_ACTUAL_BALANCE:
     return m_cryptoNoteAdapter->formatUnsignedAmount(_index.data(ROLE_ACTUAL_BALANCE).value<quint64>());

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019, The Talleo developers
+// Copyright (c) 2019-2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -172,9 +172,11 @@ MainWindow::MainWindow(ICryptoNoteAdapter* _cryptoNoteAdapter, IAddressBookManag
   m_walletStateMapper->setModel(m_walletStateModel);
   m_walletStateMapper->addMapping(m_ui->m_balanceFrame, WalletStateModel::COLUMN_IS_OPEN, "visible");
   m_walletStateMapper->addMapping(m_ui->m_walletFrame, WalletStateModel::COLUMN_IS_OPEN, "visible");
+  m_walletStateMapper->addMapping(m_ui->m_addressQRLabel, WalletStateModel::COLUMN_IS_OPEN, "visible");
   m_walletStateMapper->addMapping(m_ui->m_noWalletLabel, WalletStateModel::COLUMN_IS_CLOSED, "visible");
   m_walletStateMapper->addMapping(m_ui->m_notEncryptedFrame, WalletStateModel::COLUMN_IS_NOT_ENCRYPTED, "visible");
   m_walletStateMapper->addMapping(m_ui->m_addressLabel, WalletStateModel::COLUMN_ADDRESS, "text");
+  m_walletStateMapper->addMapping(m_ui->m_addressQRLabel, WalletStateModel::COLUMN_ADDRESS_QR, "address");
   m_walletStateMapper->addMapping(m_ui->m_balanceLabel, WalletStateModel::COLUMN_TOTAL_BALANCE, "text");
   m_walletStateMapper->setCurrentIndex(0);
 

@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -33,7 +34,7 @@ class WalletStateModel : public QAbstractItemModel, public IWalletAdapterObserve
 
 public:
   enum Columns {
-    COLUMN_IS_OPEN = 0, COLUMN_IS_CLOSED, COLUMN_IS_ENCRYPTED, COLUMN_IS_NOT_ENCRYPTED, COLUMN_ADDRESS, COLUMN_ACTUAL_BALANCE,
+    COLUMN_IS_OPEN = 0, COLUMN_IS_CLOSED, COLUMN_IS_ENCRYPTED, COLUMN_IS_NOT_ENCRYPTED, COLUMN_ADDRESS, COLUMN_ADDRESS_QR, COLUMN_ACTUAL_BALANCE,
       COLUMN_PENDING_BALANCE, COLUMN_TOTAL_BALANCE, COLUMN_IS_SYNCHRONIZED, COLUMN_IS_NOT_SYNCHRONIZED, COLUMN_ABOUT_TO_BE_SYNCHRONIZED
   };
 
