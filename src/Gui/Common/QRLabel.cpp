@@ -5,8 +5,10 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <QImage>
+#include <QStringList>
 
 #include "libqrencode/qrencode.h"
+#include "CryptoNoteWalletConfig.h"
 
 #include "QRLabel.h"
 
@@ -46,7 +48,10 @@ void QRLabel::setAddress(const QString& _address) {
   if (_address.isEmpty()) {
     clear();
   } else {
-    showQRCode(QString("talleo:").append(m_address));
+    QStringList uri;
+    uri.append(QString(BYTECOIN_URI_SCHEME_NAME));
+    uri.append(m_address);
+    showQRCode(uri.join(":"));
   }
 }
 

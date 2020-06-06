@@ -41,6 +41,7 @@
 #include "ApplicationEventHandler.h"
 #include "BlogReader.h"
 #include "CommandLineParser.h"
+#include "CryptoNoteWalletConfig.h"
 #include "Gui/Common/ExitWidget.h"
 #include "Gui/Common/P2pBindPortErrorDialog.h"
 #include "Gui/Common/QuestionDialog.h"
@@ -62,7 +63,6 @@ namespace WalletGui {
 
 namespace {
 
-const char BYTECOIN_URI_SCHEME_NAME[] = "talleo";
 const QRegularExpression LOG_SPLASH_REG_EXP("\\[Core\\] Imported block with index");
 
 quint16 findPort() {
