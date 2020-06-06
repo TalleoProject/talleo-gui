@@ -56,16 +56,6 @@ add_definitions(-DGIT_REVISION="${GIT_REVISION}")
 set(CMAKE_AUTOMOC ON)
 
 file(GLOB_RECURSE CRYPTONOTE_SOURCES
-  cryptonote/external/miniupnpc/connecthostport.c
-  cryptonote/external/miniupnpc/igd_desc_parse.c
-  cryptonote/external/miniupnpc/minisoap.c
-  cryptonote/external/miniupnpc/miniupnpc.c
-  cryptonote/external/miniupnpc/miniwget.c
-  cryptonote/external/miniupnpc/minixml.c
-  cryptonote/external/miniupnpc/portlistingparse.c
-  cryptonote/external/miniupnpc/receivedata.c
-  cryptonote/external/miniupnpc/upnpcommands.c
-  cryptonote/external/miniupnpc/upnpreplyparse.c
   cryptonote/src/BlockchainExplorer/BlockchainExplorer.cpp
   cryptonote/src/BlockchainExplorer/BlockchainExplorerErrors.cpp
   cryptonote/src/Common/Base58.cpp
@@ -181,8 +171,6 @@ if (WIN32)
 
 elseif (UNIX)
 
-  set(CRYPTONOTE_SOURCES ${CRYPTONOTE_SOURCES} cryptonote/external/miniupnpc/minissdpc.c)
-
   if (APPLE)
     enable_language(ASM)
     file(GLOB_RECURSE OBJC_SOURCES src/*.mm)
@@ -226,7 +214,7 @@ set(CRYPTONOTE_SOURCES ${CRYPTONOTE_SOURCES} ${PLATFORM_SOURCES} ${CRYPTONOTE_PL
 
 add_library(${CRYPTONOTE_LIB} STATIC ${CRYPTONOTE_SOURCES})
 set_target_properties(${CRYPTONOTE_LIB} PROPERTIES COMPILE_DEFINITIONS _GNU_SOURCE)
-target_link_libraries(${CRYPTONOTE_LIB} rocksdb ${Boost_LIBRARIES} ${Qt5DBus_LIBRARIES})
+target_link_libraries(${CRYPTONOTE_LIB} rocksdb ${Boost_LIBRARIES} ${Qt5DBus_LIBRARIES} upnpc-static)
 
 add_executable(${PROJECT_NAME} ${BUILD_PLATFORM} ${BUILD_RESOURCES} ${SOURCES} ${HEADERS} ${UIS} ${RCC})
 
@@ -243,8 +231,11 @@ endif (APPLE)
 
 qt5_use_modules(${PROJECT_NAME} Widgets Gui Network)
 
+set(UPNPC_BUILD_TESTS OFF)
+set(UPNPC_BUILD_SHARED OFF)
 if(MSVC)
   add_subdirectory(cryptonote/external)
 else()
   add_subdirectory(cryptonote/external/rocksdb)
+  add_subdirectory(cryptonote/external/miniupnpc)
 endif()
