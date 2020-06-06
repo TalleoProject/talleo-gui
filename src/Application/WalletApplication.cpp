@@ -150,13 +150,14 @@ bool WalletApplication::init() {
   WalletLogger::init(Settings::instance().getDataDir(), Settings::instance().hasDebugOption(), this);
   WalletLogger::info(tr("[Application] Initializing..."));
   m_lockFile = new QLockFile(Settings::instance().getDataDir().absoluteFilePath("TalleoWallet.lock"));
-  QUrl paymentUrl = QUrl::fromUserInput(arguments().last());
-  if (paymentUrl.scheme() == "http" && paymentUrl.path().startsWith(QString(BYTECOIN_URI_SCHEME_NAME) + "//", Qt::CaseInsensitive)) {
-    paymentUrl.setScheme(BYTECOIN_URI_SCHEME_NAME);
-    paymentUrl.setPath(paymentUrl.path().mid(strlen(BYTECOIN_URI_SCHEME_NAME) + 2));
-  }
-  if (paymentUrl.scheme() != BYTECOIN_URI_SCHEME_NAME) {
-    paymentUrl = QUrl();
+  QUrl paymentUrl;
+  for (int i = 0; i < arguments().size(); i++) {
+    QString arg = arguments().at(i);
+    // Don't use QUrl::fromUserInput(), it will mangle the payment URL
+    if (arg.startsWith(QString(BYTECOIN_URI_SCHEME_NAME).append(":"))) {
+      paymentUrl = arg;
+      break;
+    }
   }
 
 #ifndef Q_OS_MAC
