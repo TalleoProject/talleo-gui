@@ -17,10 +17,10 @@ add_subdirectory(libqrencode)
 include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
+  "${CMAKE_CURRENT_BINARY_DIR}/version"
   src
   include
   cryptonote/external
-  cryptonote/external/rocksdb/include/
   cryptonote/include
   cryptonote/src
 )
@@ -29,8 +29,9 @@ find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5DBus REQUIRED)
+find_package(RocksDB)
 
-include_directories(${Qt5DBus_INCLUDE_DIRS} cryptonote/external/rocksdb/include/ include src external "${CMAKE_CURRENT_BINARY_DIR}/version")
+include_directories(${Qt5DBus_INCLUDE_DIRS})
 
 set(Boost_USE_STATIC_LIBS ON)
 if(WIN32)
@@ -233,9 +234,16 @@ qt5_use_modules(${PROJECT_NAME} Widgets Gui Network)
 
 set(UPNPC_BUILD_TESTS OFF)
 set(UPNPC_BUILD_SHARED OFF)
-if(MSVC)
-  add_subdirectory(cryptonote/external)
-else()
-  add_subdirectory(cryptonote/external/rocksdb)
+
+if(ROCKSDB_FOUND)
+  include_directories(SYSTEM ${ROCKSDB_INCLUDE_DIRS})
   add_subdirectory(cryptonote/external/miniupnpc)
+else()
+  include_directories(cryptonote/external/rocksdb/include/)
+  if(MSVC)
+    add_subdirectory(cryptonote/external)
+  else()
+    add_subdirectory(cryptonote/external/miniupnpc)
+    add_subdirectory(cryptonote/external/rocksdb)
+  endif()
 endif()
