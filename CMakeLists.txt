@@ -8,11 +8,7 @@ WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 OUTPUT_VARIABLE GIT_REVISION)
 
 set(CRYPTONOTE_LIB cryptonote)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cryptonote/cmake;${CMAKE_CURRENT_SOURCE_DIR}/libqrencode/cmake")
-
-set(WITH_TESTS NO)
-set(WITH_TOOLS NO)
-add_subdirectory(libqrencode)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cryptonote/cmake;${CMAKE_CURRENT_SOURCE_DIR}/libqrencode/cmake")
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
@@ -30,6 +26,16 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(RocksDB)
+find_package(QRencode)
+
+if(QRENCODE_FOUND)
+  include_directories(SYSTEM ${QRENCODE_INCLUDE_DIRS})
+else()
+  include_directories(libqrencode)
+  set(WITH_TESTS NO)
+  set(WITH_TOOLS NO)
+  add_subdirectory(libqrencode)
+endif()
 
 include_directories(${Qt5DBus_INCLUDE_DIRS})
 

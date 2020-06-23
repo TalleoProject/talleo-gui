@@ -7,7 +7,7 @@
 #include <QImage>
 #include <QStringList>
 
-#include "libqrencode/qrencode.h"
+#include "qrencode.h"
 #include "CryptoNoteWalletConfig.h"
 
 #include "QRLabel.h"
