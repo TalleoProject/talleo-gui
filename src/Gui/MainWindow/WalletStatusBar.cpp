@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -48,31 +49,46 @@ const char STATUS_BAR_STYLE_SHEET_TEMPLATE[] =
     "font-size: %fontSizeTiny%;"
   "}";
 
-QString formatTimeDiff(quint64 _timeDiff) {
+QString formatTimeDiff(qint64 _timeDiff) {
 
+  const int cseconds_in_week = 604800;
   const int cseconds_in_day = 86400;
   const int cseconds_in_hour = 3600;
   const int cseconds_in_minute = 60;
-  const int cseconds = 1;
 
-  long long day = _timeDiff > cseconds_in_day ? _timeDiff / cseconds_in_day : 0;
-  long hour = _timeDiff > cseconds_in_hour ? (_timeDiff % cseconds_in_day) / cseconds_in_hour : 0;
-  long minute = _timeDiff > cseconds_in_minute ? ((_timeDiff % cseconds_in_day) % cseconds_in_hour) / cseconds_in_minute : 0;
-  long seconds = (((_timeDiff % cseconds_in_day) % cseconds_in_hour) % cseconds_in_minute) / cseconds;
+  long long week = _timeDiff >= cseconds_in_week ? _timeDiff / cseconds_in_week : 0;
+  long day = _timeDiff >= cseconds_in_day ? (_timeDiff % cseconds_in_week) / cseconds_in_day : 0;
+  long hour = _timeDiff >= cseconds_in_hour ? (_timeDiff % cseconds_in_day) / cseconds_in_hour : 0;
+  long minute = _timeDiff >= cseconds_in_minute ? (_timeDiff % cseconds_in_hour) / cseconds_in_minute : 0;
+  long seconds = _timeDiff % cseconds_in_minute;
 
   QString firstPart;
   QString secondPart;
 
-   if (day > 0) {
+  if (week > 0) {
+    firstPart = QStringLiteral("%1 %2").arg(week).arg(week == 1 ? QObject::tr("week") : QObject::tr("weeks"));
+    if (day > 0) {
+      secondPart = QStringLiteral("%1 %2").arg(day).arg(day == 1 ? QObject::tr("day") : QObject::tr("days"));
+    }
+  } else if (day > 0) {
     firstPart = QStringLiteral("%1 %2").arg(day).arg(day == 1 ? QObject::tr("day") : QObject::tr("days"));
-    secondPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
+    if (hour > 0) {
+      secondPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
+    }
   } else if (hour > 0) {
     firstPart = QStringLiteral("%1 %2").arg(hour).arg(hour == 1 ? QObject::tr("hour") : QObject::tr("hours"));
-    secondPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
+    if (minute > 0) {
+      secondPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
+    }
   } else if (minute > 0) {
     firstPart = QStringLiteral("%1 %2").arg(minute).arg(minute == 1 ? QObject::tr("minute") : QObject::tr("minutes"));
+    if (seconds > 0) {
+      secondPart = QStringLiteral("%1 %2").arg(seconds).arg(seconds == 1 ? QObject::tr("second") : QObject::tr("seconds"));
+    }
+  } else if (seconds > 0) {
+    firstPart = QStringLiteral("%1 %2").arg(seconds).arg(seconds == 1 ? QObject::tr("second") : QObject::tr("seconds"));
   } else {
-    firstPart = QStringLiteral("Less than 1 minute");
+    firstPart = QStringLiteral("Less than 1 second");
   }
 
   if (secondPart.isNull()) {
@@ -172,7 +188,7 @@ void WalletStatusBar::synchronizationProgressUpdated(quint32 _current, quint32 _
 
   quint64 currentDateTime = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch() / 1000;
   quint64 lastBlockTimestamp = m_nodeStateModel->index(0, NodeStateModel::COLUMN_LAST_LOCAL_BLOCK_TIMESTAMP).data(NodeStateModel::ROLE_LAST_LOCAL_BLOCK_TIMESTAMP).value<quint64>();
-  quint64 timeDiff = currentDateTime - lastBlockTimestamp;
+  qint64 timeDiff = currentDateTime - lastBlockTimestamp;
   QString formattedTimeDiff = lastBlockTimestamp > 0 ? formatTimeDiff(timeDiff) : tr("unknown");
   QString blockchainAge = lastBlockTimestamp > 0 ? QStringLiteral("%1 ago").arg(formattedTimeDiff) : QStringLiteral("%1").arg(formattedTimeDiff);
 
