@@ -45,20 +45,6 @@ const char KEY_DIALOG_STYLE_SHEET_TEMPLATE[] =
     "border: 1px solid %borderColorDark%;"
   "}";
 
-bool isTrackingKeys(const QByteArray& _array) {
-  if (_array.size() < sizeof(AccountKeys)) {
-    return false;
-  }
-
-  AccountKeys accountKeys;
-  QDataStream trackingKeysDataStream(_array);
-  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.publicKey), sizeof(Crypto::PublicKey));
-  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.publicKey), sizeof(Crypto::PublicKey));
-  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.secretKey), sizeof(Crypto::SecretKey));
-  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.secretKey), sizeof(Crypto::SecretKey));
-  return (std::memcmp(&accountKeys.spendKeys.secretKey, &CryptoNote::NULL_SECRET_KEY, sizeof(Crypto::SecretKey)) == 0);
-}
-
 }
 
 KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
@@ -67,7 +53,8 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
   , m_isTracking(_isTracking)
   , m_isExport(true)
   , m_isPrivateKeyExport(false)
-  , m_key(_key) {
+  , m_key(_key)
+  , m_isSeedImport(false) {
   m_ui->setupUi(this);
   setWindowTitle(m_isTracking ? tr("Export tracking key") : tr("Export key"));
   m_ui->m_fileButton->setText(tr("Save to file"));
@@ -85,8 +72,9 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKe
 	, m_ui(new Ui::KeyDialog)
 	, m_isTracking(_isTracking)
 	, m_isExport(true)
-        , m_isPrivateKeyExport(true)
-	, m_key(_key) {
+	, m_isPrivateKeyExport(true)
+	, m_key(_key)
+	, m_isSeedImport(false) {
 	m_ui->setupUi(this);
 	m_ui->m_fileButton->hide();
 	m_ui->m_okButton->setText(tr("Close"));
@@ -118,18 +106,25 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKe
 	setWindowTitle(tr("Export secret keys"));
 }
 
-KeyDialog::KeyDialog(QWidget* _parent)
+KeyDialog::KeyDialog(QWidget* _parent, bool _isSeed)
   : QDialog(_parent, static_cast<Qt::WindowFlags>(Qt::WindowCloseButtonHint))
   , m_ui(new Ui::KeyDialog)
   , m_isTracking(false)
   , m_isExport(false)
-  , m_isPrivateKeyExport(false) {
+  , m_isPrivateKeyExport(false)
+  , m_isSeedImport(_isSeed) {
   m_ui->setupUi(this);
-  setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
-  m_ui->m_fileButton->setText(tr("Load from file"));
-  if (m_isTracking) {
-    m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
-      "It doesn't allow spending funds."));
+  if (m_isSeedImport) {
+    setWindowTitle(tr("Import mnemonic seed"));
+    m_ui->m_fileButton->hide();
+  } else {
+    setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
+    m_ui->m_fileButton->setText(tr("Load from file"));
+
+    if (m_isTracking) {
+      m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
+        "It doesn't allow spending funds."));
+    }
   }
 
   setFixedHeight(195);
@@ -138,7 +133,39 @@ KeyDialog::KeyDialog(QWidget* _parent)
 KeyDialog::~KeyDialog() {
 }
 
+bool KeyDialog::isTrackingKeys(const QByteArray& _array) {
+  if (_array.size() < sizeof(AccountKeys)) {
+    return false;
+  }
+
+  AccountKeys accountKeys;
+  QDataStream trackingKeysDataStream(_array);
+  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.publicKey), sizeof(Crypto::PublicKey));
+  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.publicKey), sizeof(Crypto::PublicKey));
+  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.secretKey), sizeof(Crypto::SecretKey));
+  trackingKeysDataStream.readRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.secretKey), sizeof(Crypto::SecretKey));
+  return (std::memcmp(&accountKeys.spendKeys.secretKey, &CryptoNote::NULL_SECRET_KEY, sizeof(Crypto::SecretKey)) == 0);
+}
+
 QByteArray KeyDialog::getKey() const {
+  if (m_isSeedImport) {
+    QByteArray seed = m_ui->m_keyEdit->toPlainText().toUtf8();
+    AccountKeys accountKeys;
+    if (crypto::ElectrumWords::is_valid_mnemonic(seed.constData(), accountKeys.spendKeys.secretKey)) {
+      CryptoNote::AccountBase::generateViewFromSpend(accountKeys.spendKeys.secretKey, accountKeys.viewKeys.secretKey);
+      Crypto::secret_key_to_public_key(accountKeys.spendKeys.secretKey, accountKeys.spendKeys.publicKey);
+      Crypto::secret_key_to_public_key(accountKeys.viewKeys.secretKey, accountKeys.viewKeys.publicKey);
+      QByteArray _keys;
+      QDataStream keysDataStream(&_keys, QIODevice::WriteOnly);
+      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.publicKey), sizeof(Crypto::PublicKey));
+      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.publicKey), sizeof(Crypto::PublicKey));
+      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.secretKey), sizeof(Crypto::SecretKey));
+      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.secretKey), sizeof(Crypto::SecretKey));
+      return _keys;
+    } else {
+      return QByteArray();
+    }
+  }
   return QByteArray::fromHex(m_ui->m_keyEdit->toPlainText().toLatin1());
 }
 
@@ -213,12 +240,16 @@ void KeyDialog::keyChanged() {
       m_ui->m_descriptionLabel->clear();
     }
   } else {
-    setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
-    if (m_isTracking) {
-      m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
-        "It doesn't allow spending funds."));
+    if (m_isSeedImport) {
+       setWindowTitle(tr("Import mnemonic seed"));
     } else {
-      m_ui->m_descriptionLabel->clear();
+      setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
+      if (m_isTracking) {
+        m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
+          "It doesn't allow spending funds."));
+      } else {
+        m_ui->m_descriptionLabel->clear();
+      }
     }
   }
 }

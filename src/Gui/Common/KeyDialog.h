@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -35,16 +36,18 @@ class KeyDialog
 public:
   KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent);
   KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKeyExport, QWidget *_parent);
-  KeyDialog(QWidget *_parent);
+  KeyDialog(QWidget *_parent, bool _isSeedImport);
   ~KeyDialog();
 
   QByteArray getKey() const;
+  static bool isTrackingKeys(const QByteArray& _array);
 
 private:
   QScopedPointer<Ui::KeyDialog> m_ui;
   bool m_isTracking;
   bool m_isExport;
   bool m_isPrivateKeyExport;
+  bool m_isSeedImport;
   QByteArray m_key;
 
   void saveKey();

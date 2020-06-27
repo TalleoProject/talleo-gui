@@ -851,6 +851,13 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuImport">
+     <property name="title">
+      <string>Import...</string>
+     </property>
+     <addaction name="m_importKeyAction"/>
+     <addaction name="m_importSeedAction"/>
+    </widget>
     <widget class="QMenu" name="menuExport">
      <property name="title">
       <string>Export...</string>
@@ -865,7 +872,7 @@
     <addaction name="m_backupWalletAction"/>
     <addaction name="m_saveKeysAction"/>
     <addaction name="m_resetAction"/>
-    <addaction name="m_importKeyAction"/>
+    <addaction name="menuImport"/>
     <addaction name="menuExport"/>
     <addaction name="m_exitAction"/>
    </widget>
@@ -1019,10 +1026,18 @@
   </action>
   <action name="m_importKeyAction">
    <property name="text">
-    <string>Import key</string>
+    <string>Key</string>
    </property>
    <property name="toolTip">
     <string>Import key</string>
+   </property>
+  </action>
+  <action name="m_importSeedAction">
+   <property name="text">
+    <string>Mnemonic seed</string>
+   </property>
+   <property name="toolTip">
+    <string>Import mnemonic seed</string>
    </property>
   </action>
   <action name="m_communityForumAction">
@@ -1474,6 +1489,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>m_importSeedAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importSeed()</slot>
+   <hints>
+    <hint type="sourceLabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationLabel">
+     <x>629</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>m_communityForumAction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1585,6 +1616,7 @@
   <slot>showPreferences()</slot>
   <slot>exportTrackingKey()</slot>
   <slot>importKey()</slot>
+  <slot>importSeed()</slot>
   <slot>communityForumTriggered()</slot>
   <slot>reportIssueTriggered()</slot>
   <slot>resetWallet()</slot>

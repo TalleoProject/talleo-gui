@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -128,6 +129,7 @@ private:
   Q_SLOT void exportPrivateKeys();
   Q_SLOT void exportTrackingKey();
   Q_SLOT void importKey();
+  Q_SLOT void importSeed();
   Q_SLOT void aboutQt();
   Q_SLOT void about();
   Q_SLOT void copyAddress();
