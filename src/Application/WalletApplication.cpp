@@ -113,6 +113,9 @@ WalletApplication::WalletApplication(int& _argc, char** _argv) : QApplication(_a
       && !qEnvironmentVariableIsSet("QT_SCREEN_SCALE_FACTORS")) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   }
+#if QT_VERSION >= 0x050e00
+  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
   setApplicationName("TalleoWallet");
   setApplicationVersion(Settings::instance().getVersion());
   setQuitOnLastWindowClosed(false);

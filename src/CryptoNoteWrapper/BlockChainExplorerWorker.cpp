@@ -277,8 +277,13 @@ void BlockChainExplorerWorker::blockchainUpdated(const std::vector<CryptoNote::B
   WalletLogger::debug(tr("[Blockchain explorer] Event: Blockchain updated, %1 new blocks, %2 orphaned blocks").arg(_newBlocks.size()).
     arg(_orphanedBlocks.size()));
   // Do nothing
+#if QT_VERSION >= 0x050e00
+  auto newBlocks(std::move(QVector<CryptoNote::BlockDetails>(_newBlocks.begin(), _newBlocks.end())));
+  auto orphanedBlocks(std::move(QVector<CryptoNote::BlockDetails>(_orphanedBlocks.begin(), _orphanedBlocks.end())));
+#else
   auto newBlocks(std::move(QVector<CryptoNote::BlockDetails>::fromStdVector(_newBlocks)));
   auto orphanedBlocks(std::move(QVector<CryptoNote::BlockDetails>::fromStdVector(_orphanedBlocks)));
+#endif
   Q_EMIT blockChainUpdatedSignal(newBlocks, orphanedBlocks);
 }
 
@@ -286,7 +291,12 @@ void BlockChainExplorerWorker::poolUpdated(const std::vector<CryptoNote::Transac
   const std::vector<std::pair<Crypto::Hash, CryptoNote::TransactionRemoveReason> >& _removedTransactions) {
   WalletLogger::debug(tr("[Blockchain explorer] Event: Pool updated, %1 new transactions, %2 removed transactions").
     arg(_newTransactions.size()).arg(_removedTransactions.size()));
-  QVector<CryptoNote::TransactionDetails> newTransactions = QVector<CryptoNote::TransactionDetails>::fromStdVector(_newTransactions);
+  QVector<CryptoNote::TransactionDetails> newTransactions =
+#if QT_VERSION >= 0x050e00
+    QVector<CryptoNote::TransactionDetails>(_newTransactions.begin(), _newTransactions.end());
+#else
+    QVector<CryptoNote::TransactionDetails>::fromStdVector(_newTransactions);
+#endif
   QVector<Crypto::Hash> removedTransactions((int)_removedTransactions.size());
   for (quintptr i = 0; i < _removedTransactions.size(); ++i) {
     removedTransactions[i] = _removedTransactions[i].first;
@@ -382,7 +392,12 @@ void BlockChainExplorerWorker::preloadBlocksImpl(quint32 _minBlockIndex, quint32
 void BlockChainExplorerWorker::preloadBlocksImpl(const QVector<quint32>& _blockIndexes) {
   SemaphoreUnlocker unlocker(m_preloadSemaphore);
   WalletLogger::debug(tr("[Blockchain explorer] Preloading blocks by indexes, indexes size=%1").arg(_blockIndexes.size()));
-  std::vector<uint32_t> blockIndexes = _blockIndexes.toStdVector();
+  std::vector<uint32_t> blockIndexes =
+#if QT_VERSION >= 0x050e00
+    std::vector<uint32_t>(_blockIndexes.begin(), _blockIndexes.end());
+#else
+    _blockIndexes.toStdVector();
+#endif
   std::vector<std::vector<CryptoNote::BlockDetails>> blocks;
   if(blockIndexes.empty()) {
     Q_EMIT blocksPreloadCompletedSignal(PRELOAD_FAIL, INVALID_BLOCK_HEIGHT, INVALID_BLOCK_HEIGHT);
@@ -464,7 +479,12 @@ void BlockChainExplorerWorker::preloadBlocksImpl(const QDateTime& _timestampBegi
 void BlockChainExplorerWorker::preloadBlocksImpl(const QVector<Crypto::Hash>& _blockHashes) {
   SemaphoreUnlocker unlocker(m_preloadSemaphore);
   WalletLogger::debug(tr("[Blockchain explorer] Preloading blocks by hashes, hashes size=%1").arg(_blockHashes.size()));
-  std::vector<Crypto::Hash> blockHashes = _blockHashes.toStdVector();
+  std::vector<Crypto::Hash> blockHashes =
+#if QT_VERSION >= 0x050e00
+    std::vector<Crypto::Hash>(_blockHashes.begin(), _blockHashes.end());
+#else
+    _blockHashes.toStdVector();
+#endif
   std::vector<CryptoNote::BlockDetails> blocks;
   if(blockHashes.empty()) {
     Q_EMIT blocksPreloadCompletedSignal(PRELOAD_FAIL, INVALID_BLOCK_HEIGHT, INVALID_BLOCK_HEIGHT);
@@ -520,7 +540,12 @@ void BlockChainExplorerWorker::getPoolStateImpl() {
       Q_EMIT getPoolStateCompleted(POOL_FAIL, result);
     } else {
       WalletLogger::debug(tr("[Blockchain explorer] Get pool state: SUCCESS."));
-      result = QVector<CryptoNote::TransactionDetails>::fromStdVector(transactions);
+      result =
+#if QT_VERSION >= 0x050e00
+        QVector<CryptoNote::TransactionDetails>(transactions.begin(), transactions.end());
+#else
+        QVector<CryptoNote::TransactionDetails>::fromStdVector(transactions);
+#endif
       Q_EMIT getPoolStateCompleted(POOL_SUCCESS, result);
     }
   } catch (const std::system_error& _error) {
