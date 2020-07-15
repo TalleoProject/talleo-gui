@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>KeyDialog</class>
- <widget class="QDialog" name="KeyDialog">
+ <class>ImportKeyDialog</class>
+ <widget class="QDialog" name="ImportKeyDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -47,6 +47,77 @@
    <property name="bottomMargin">
     <number>20</number>
    </property>
+   <item>
+    <widget class="QFrame" name="m_keysFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
+     <widget class="QTextEdit" name="m_viewKey">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>70</y>
+        <width>545</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="m_spendKeyLabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Private spend key:</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="m_spendKey">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>545</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="m_viewKeyLabel">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>50</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Private view key:</string>
+      </property>
+     </widget>
+    </widget>
+   </item>
    <item>
     <widget class="QTextEdit" name="m_keyEdit">
      <property name="minimumSize">
@@ -181,7 +252,7 @@
   <connection>
    <sender>m_fileButton</sender>
    <signal>clicked()</signal>
-   <receiver>KeyDialog</receiver>
+   <receiver>ImportKeyDialog</receiver>
    <slot>fileClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -197,7 +268,7 @@
   <connection>
    <sender>m_okButton</sender>
    <signal>clicked()</signal>
-   <receiver>KeyDialog</receiver>
+   <receiver>ImportKeyDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -213,7 +284,7 @@
   <connection>
    <sender>m_cancelButton</sender>
    <signal>clicked()</signal>
-   <receiver>KeyDialog</receiver>
+   <receiver>ImportKeyDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -229,7 +300,7 @@
   <connection>
    <sender>m_keyEdit</sender>
    <signal>textChanged()</signal>
-   <receiver>KeyDialog</receiver>
+   <receiver>ImportKeyDialog</receiver>
    <slot>keyChanged()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -39,7 +39,8 @@
 #include "Gui/Common/AboutDialog.h"
 #include "Gui/Common/ChangePasswordDialog.h"
 #include "Gui/Common/NewPasswordDialog.h"
-#include "Gui/Common/KeyDialog.h"
+#include "Gui/Common/ExportKeyDialog.h"
+#include "Gui/Common/ImportKeyDialog.h"
 #include "Gui/Common/QuestionDialog.h"
 #include "ICryptoNoteAdapter.h"
 #include "INodeAdapter.h"
@@ -688,7 +689,7 @@ void MainWindow::exportKey() {
     return;
   AccountKeys accountKeys = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->getAccountKeys(0);
   QByteArray keys = convertAccountKeysToByteArray(accountKeys);
-  KeyDialog dlg(keys, false, this);
+  ExportKeyDialog dlg(keys, false, this);
   dlg.exec();
 }
 
@@ -699,7 +700,7 @@ void MainWindow::exportPrivateKeys() {
 		return;
 	AccountKeys accountKeys = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->getAccountKeys(0);
 	QByteArray keys = convertAccountPrivateKeysToByteArray(accountKeys);
-	KeyDialog dlg(keys, false, true, this);
+	ExportKeyDialog dlg(keys, false, true, this);
 	dlg.exec();
 }
 
@@ -707,12 +708,51 @@ void MainWindow::exportTrackingKey() {
   AccountKeys accountKeys = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter()->getAccountKeys(0);
   std::memset(&accountKeys.spendKeys.secretKey, 0, sizeof(Crypto::SecretKey));
   QByteArray trackingKeys = convertAccountKeysToByteArray(accountKeys);
-  KeyDialog dlg(trackingKeys, true, this);
+  ExportKeyDialog dlg(trackingKeys, true, this);
   dlg.exec();
 }
 
+void MainWindow::saveWallet(QByteArray key, bool _isTrackingKeys) {
+  QString filePath = QFileDialog::getSaveFileName(this, _isTrackingKeys ? tr("Save tracking wallet to...") : tr("Save wallet to..."),
+#ifdef Q_OS_WIN
+  QApplication::applicationDirPath(),
+#else
+  QDir::homePath(),
+#endif
+  tr("Wallets (*.wallet)"));
+  if (filePath.isEmpty()) {
+    return;
+  }
+
+  if (!filePath.endsWith(".wallet")) {
+    filePath.append(".wallet");
+  }
+
+  if (QFile::exists(filePath)) {
+    QMessageBox::warning(this, tr("Warning"),
+      tr("Can't overwrite existing %1 because it may lead to loss of private keys").arg(QFileInfo(filePath).fileName()));
+    return;
+  }
+
+  IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
+  if (walletAdapter->isOpen()) {
+    walletAdapter->removeObserver(this);
+    walletAdapter->close();
+    walletAdapter->addObserver(this);
+  }
+
+  AccountKeys accountKeys = convertByteArrayToAccountKeys(key);
+  QString oldWalletFile = Settings::instance().getWalletFile();
+  Settings::instance().setWalletFile(filePath);
+  if (walletAdapter->createWithKeys(filePath, accountKeys) == IWalletAdapter::INIT_SUCCESS) {
+    walletAdapter->save(CryptoNote::WalletSaveLevel::SAVE_ALL, true);
+  } else {
+    Settings::instance().setWalletFile(oldWalletFile);
+  }
+}
+
 void MainWindow::importKey() {
-  KeyDialog dlg(this, false);
+  ImportKeyDialog dlg(this, false, false, false);
   if (dlg.exec() == QDialog::Accepted) {
     QByteArray key = dlg.getKey();
     bool _isTrackingKeys = dlg.isTrackingKeys(key);
@@ -721,47 +761,40 @@ void MainWindow::importKey() {
       return;
     }
 
-    QString filePath = QFileDialog::getSaveFileName(this, _isTrackingKeys ? tr("Save tracking wallet to...") : tr("Save wallet to..."),
-#ifdef Q_OS_WIN
-    QApplication::applicationDirPath(),
-#else
-    QDir::homePath(),
-#endif
-    tr("Wallets (*.wallet)"));
-    if (filePath.isEmpty()) {
+    saveWallet(key, _isTrackingKeys);
+  }
+}
+
+void MainWindow::importTrackingKey() {
+  ImportKeyDialog dlg(this, true, false, false);
+  if (dlg.exec() == QDialog::Accepted) {
+    QByteArray key = dlg.getKey();
+    bool _isTrackingKeys = dlg.isTrackingKeys(key);
+    if (key.size() != sizeof(CryptoNote::AccountKeys)) {
+      QMessageBox::warning(this, tr("Warning"), _isTrackingKeys ? tr("Incorrect tracking key size") : tr("Incorrect key size"));
       return;
     }
 
-    if (!filePath.endsWith(".wallet")) {
-      filePath.append(".wallet");
-    }
+    saveWallet(key, _isTrackingKeys);
+  }
+}
 
-    if (QFile::exists(filePath)) {
-      QMessageBox::warning(this, tr("Warning"),
-        tr("Can't overwrite existing %1 because it may lead to loss of private keys").arg(QFileInfo(filePath).fileName()));
+void MainWindow::importPrivateKeys() {
+  ImportKeyDialog dlg(this, false, false, true);
+  if (dlg.exec() == QDialog::Accepted) {
+    QByteArray key = dlg.getKey();
+    bool _isTrackingKeys = dlg.isTrackingKeys(key);
+    if (key.size() != sizeof(CryptoNote::AccountKeys)) {
+      QMessageBox::warning(this, tr("Warning"), _isTrackingKeys ? tr("Incorrect tracking key size") : tr("Incorrect key size"));
       return;
     }
 
-    IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
-    if (walletAdapter->isOpen()) {
-      walletAdapter->removeObserver(this);
-      walletAdapter->close();
-      walletAdapter->addObserver(this);
-    }
-
-    AccountKeys accountKeys = convertByteArrayToAccountKeys(key);
-    QString oldWalletFile = Settings::instance().getWalletFile();
-    Settings::instance().setWalletFile(filePath);
-    if (walletAdapter->createWithKeys(filePath, accountKeys) == IWalletAdapter::INIT_SUCCESS) {
-      walletAdapter->save(CryptoNote::WalletSaveLevel::SAVE_ALL, true);
-    } else {
-      Settings::instance().setWalletFile(oldWalletFile);
-    }
+    saveWallet(key, _isTrackingKeys);
   }
 }
 
 void MainWindow::importSeed() {
-  KeyDialog dlg(this, true);
+  ImportKeyDialog dlg(this, false, true, false);
   if (dlg.exec() == QDialog::Accepted) {
     QByteArray key = dlg.getKey();
     if (key.size() != sizeof(CryptoNote::AccountKeys)) {
@@ -769,42 +802,7 @@ void MainWindow::importSeed() {
       return;
     }
 
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Save wallet to..."),
-#ifdef Q_OS_WIN
-    QApplication::applicationDirPath(),
-#else
-    QDir::homePath(),
-#endif
-    tr("Wallets (*.wallet)"));
-    if (filePath.isEmpty()) {
-      return;
-    }
-
-    if (!filePath.endsWith(".wallet")) {
-      filePath.append(".wallet");
-    }
-
-    if (QFile::exists(filePath)) {
-      QMessageBox::warning(this, tr("Warning"),
-        tr("Can't overwrite existing %1 because it may lead to loss of private keys").arg(QFileInfo(filePath).fileName()));
-      return;
-    }
-
-    IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
-    if (walletAdapter->isOpen()) {
-      walletAdapter->removeObserver(this);
-      walletAdapter->close();
-      walletAdapter->addObserver(this);
-    }
-
-    AccountKeys accountKeys = convertByteArrayToAccountKeys(key);
-    QString oldWalletFile = Settings::instance().getWalletFile();
-    Settings::instance().setWalletFile(filePath);
-    if (walletAdapter->createWithKeys(filePath, accountKeys) == IWalletAdapter::INIT_SUCCESS) {
-      walletAdapter->save(CryptoNote::WalletSaveLevel::SAVE_ALL, true);
-    } else {
-      Settings::instance().setWalletFile(oldWalletFile);
-    }
+    saveWallet(key, false);
   }
 }
 

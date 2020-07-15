@@ -856,6 +856,8 @@
       <string>Import...</string>
      </property>
      <addaction name="m_importKeyAction"/>
+     <addaction name="m_importTrackingKeyAction"/>
+     <addaction name="m_importPrivateKeysAction"/>
      <addaction name="m_importSeedAction"/>
     </widget>
     <widget class="QMenu" name="menuExport">
@@ -1030,6 +1032,22 @@
    </property>
    <property name="toolTip">
     <string>Import key</string>
+   </property>
+  </action>
+  <action name="m_importTrackingKeyAction">
+   <property name="text">
+    <string>Tracking key</string>
+   </property>
+   <property name="toolTip">
+    <string>Import tracking key</string>
+   </property>
+  </action>
+  <action name="m_importPrivateKeysAction">
+   <property name="text">
+    <string>Private keys</string>
+   </property>
+   <property name="toolTip">
+    <string>Import private keys</string>
    </property>
   </action>
   <action name="m_importSeedAction">
@@ -1477,6 +1495,38 @@
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>importKey()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_importTrackingKeyAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importTrackingKey()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_importPrivateKeysAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importPrivateKeys()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

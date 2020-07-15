@@ -23,34 +23,30 @@
 #include <QDialog>
 
 namespace Ui {
-  class KeyDialog;
+  class ImportKeyDialog;
 }
 
 namespace WalletGui {
 
-class KeyDialog
+class ImportKeyDialog
   : public QDialog {
   Q_OBJECT
-  Q_DISABLE_COPY(KeyDialog)
+  Q_DISABLE_COPY(ImportKeyDialog)
 
 public:
-  KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent);
-  KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKeyExport, QWidget *_parent);
-  KeyDialog(QWidget *_parent, bool _isSeedImport);
-  ~KeyDialog();
+  ImportKeyDialog(QWidget *_parent, bool _isTracking, bool _isSeedImport, bool _isPrivateKeysImport);
+  ~ImportKeyDialog();
 
   QByteArray getKey() const;
   static bool isTrackingKeys(const QByteArray& _array);
 
 private:
-  QScopedPointer<Ui::KeyDialog> m_ui;
+  QScopedPointer<Ui::ImportKeyDialog> m_ui;
   bool m_isTracking;
-  bool m_isExport;
-  bool m_isPrivateKeyExport;
   bool m_isSeedImport;
+  bool m_isPrivateKeysImport;
   QByteArray m_key;
 
-  void saveKey();
   void loadKey();
 
   Q_SLOT void fileClicked();

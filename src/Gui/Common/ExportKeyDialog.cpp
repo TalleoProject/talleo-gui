@@ -21,25 +21,25 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "KeyDialog.h"
+#include "ExportKeyDialog.h"
 #include "IWalletAdapter.h"
 #include "Common/StringTools.h"
 #include "CryptoNoteCore/Account.h"
 #include "Mnemonics/electrum-words.h"
 #include "Settings/Settings.h"
 #include "Style/Style.h"
-#include "ui_KeyDialog.h"
+#include "ui_ExportKeyDialog.h"
 
 namespace WalletGui {
 
 namespace {
 
-const char KEY_DIALOG_STYLE_SHEET_TEMPLATE[] =
+const char EXPORT_KEY_DIALOG_STYLE_SHEET_TEMPLATE[] =
   "* {"
     "font-family: %fontFamily%;"
   "}"
 
-  "WalletGui--KeyDialog #m_keyEdit {"
+  "WalletGui--ExportKeyDialog #m_keyEdit {"
     "font-size: %fontSizeNormal%;"
     "border-radius: 2px;"
     "border: 1px solid %borderColorDark%;"
@@ -47,14 +47,12 @@ const char KEY_DIALOG_STYLE_SHEET_TEMPLATE[] =
 
 }
 
-KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
+ExportKeyDialog::ExportKeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
   : QDialog(_parent, static_cast<Qt::WindowFlags>(Qt::WindowCloseButtonHint))
-  , m_ui(new Ui::KeyDialog)
+  , m_ui(new Ui::ExportKeyDialog)
   , m_isTracking(_isTracking)
-  , m_isExport(true)
   , m_isPrivateKeyExport(false)
-  , m_key(_key)
-  , m_isSeedImport(false) {
+  , m_key(_key) {
   m_ui->setupUi(this);
   setWindowTitle(m_isTracking ? tr("Export tracking key") : tr("Export key"));
   m_ui->m_fileButton->setText(tr("Save to file"));
@@ -64,17 +62,15 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, QWidget *_parent)
 
   m_ui->m_cancelButton->hide();
   setFixedHeight(195);
-  setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(KEY_DIALOG_STYLE_SHEET_TEMPLATE));
+  setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(EXPORT_KEY_DIALOG_STYLE_SHEET_TEMPLATE));
 }
 
-KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKeyExport, QWidget *_parent)
+ExportKeyDialog::ExportKeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKeyExport, QWidget *_parent)
 	: QDialog(_parent, static_cast<Qt::WindowFlags>(Qt::WindowCloseButtonHint))
-	, m_ui(new Ui::KeyDialog)
+	, m_ui(new Ui::ExportKeyDialog)
 	, m_isTracking(_isTracking)
-	, m_isExport(true)
 	, m_isPrivateKeyExport(true)
-	, m_key(_key)
-	, m_isSeedImport(false) {
+	, m_key(_key) {
 	m_ui->setupUi(this);
 	m_ui->m_fileButton->hide();
 	m_ui->m_okButton->setText(tr("Close"));
@@ -102,38 +98,14 @@ KeyDialog::KeyDialog(const QByteArray& _key, bool _isTracking, bool _isPrivateKe
 
 	m_ui->m_cancelButton->hide();
 	setFixedHeight(195);
-	setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(KEY_DIALOG_STYLE_SHEET_TEMPLATE));
+	setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(EXPORT_KEY_DIALOG_STYLE_SHEET_TEMPLATE));
 	setWindowTitle(tr("Export secret keys"));
 }
 
-KeyDialog::KeyDialog(QWidget* _parent, bool _isSeed)
-  : QDialog(_parent, static_cast<Qt::WindowFlags>(Qt::WindowCloseButtonHint))
-  , m_ui(new Ui::KeyDialog)
-  , m_isTracking(false)
-  , m_isExport(false)
-  , m_isPrivateKeyExport(false)
-  , m_isSeedImport(_isSeed) {
-  m_ui->setupUi(this);
-  if (m_isSeedImport) {
-    setWindowTitle(tr("Import mnemonic seed"));
-    m_ui->m_fileButton->hide();
-  } else {
-    setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
-    m_ui->m_fileButton->setText(tr("Load from file"));
-
-    if (m_isTracking) {
-      m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
-        "It doesn't allow spending funds."));
-    }
-  }
-
-  setFixedHeight(195);
+ExportKeyDialog::~ExportKeyDialog() {
 }
 
-KeyDialog::~KeyDialog() {
-}
-
-bool KeyDialog::isTrackingKeys(const QByteArray& _array) {
+bool ExportKeyDialog::isTrackingKeys(const QByteArray& _array) {
   if (_array.size() < sizeof(AccountKeys)) {
     return false;
   }
@@ -147,29 +119,11 @@ bool KeyDialog::isTrackingKeys(const QByteArray& _array) {
   return (std::memcmp(&accountKeys.spendKeys.secretKey, &CryptoNote::NULL_SECRET_KEY, sizeof(Crypto::SecretKey)) == 0);
 }
 
-QByteArray KeyDialog::getKey() const {
-  if (m_isSeedImport) {
-    QByteArray seed = m_ui->m_keyEdit->toPlainText().toUtf8();
-    AccountKeys accountKeys;
-    if (crypto::ElectrumWords::is_valid_mnemonic(seed.constData(), accountKeys.spendKeys.secretKey)) {
-      CryptoNote::AccountBase::generateViewFromSpend(accountKeys.spendKeys.secretKey, accountKeys.viewKeys.secretKey);
-      Crypto::secret_key_to_public_key(accountKeys.spendKeys.secretKey, accountKeys.spendKeys.publicKey);
-      Crypto::secret_key_to_public_key(accountKeys.viewKeys.secretKey, accountKeys.viewKeys.publicKey);
-      QByteArray _keys;
-      QDataStream keysDataStream(&_keys, QIODevice::WriteOnly);
-      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.publicKey), sizeof(Crypto::PublicKey));
-      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.publicKey), sizeof(Crypto::PublicKey));
-      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.spendKeys.secretKey), sizeof(Crypto::SecretKey));
-      keysDataStream.writeRawData(reinterpret_cast<char*>(&accountKeys.viewKeys.secretKey), sizeof(Crypto::SecretKey));
-      return _keys;
-    } else {
-      return QByteArray();
-    }
-  }
+QByteArray ExportKeyDialog::getKey() const {
   return QByteArray::fromHex(m_ui->m_keyEdit->toPlainText().toLatin1());
 }
 
-void KeyDialog::saveKey() {
+void ExportKeyDialog::saveKey() {
   QString filePath = QFileDialog::getSaveFileName(this, m_isTracking ? tr("Save tracking key to...") : tr("Save key to..."),
 #ifdef Q_OS_WIN
     QApplication::applicationDirPath(),
@@ -196,60 +150,23 @@ void KeyDialog::saveKey() {
   keyFile.close();
 }
 
-void KeyDialog::loadKey() {
-  QString filePath = QFileDialog::getOpenFileName(this, m_isTracking ? tr("Load tracking key from...") : tr("Load key from..."),
-#ifdef Q_OS_WIN
-    QApplication::applicationDirPath(),
-#else
-    QDir::homePath(),
-#endif
-    m_isTracking ? tr("Tracking key (*.trackingkey)") : tr("Wallet key (*.walletkey)"));
-  if (filePath.isEmpty()) {
-    return;
-  }
-
-  QFile keyFile(filePath);
-  if (!keyFile.open(QIODevice::ReadOnly)) {
-    return;
-  }
-
-  m_key = keyFile.readAll();
-  keyFile.close();
-  m_ui->m_keyEdit->setPlainText(m_key.toHex().toUpper());
+void ExportKeyDialog::fileClicked() {
+  saveKey();
+  accept();
 }
 
-void KeyDialog::fileClicked() {
-  if (m_isExport) {
-    saveKey();
-    accept();
-  } else {
-    loadKey();
-  }
-}
-
-void KeyDialog::keyChanged() {
+void ExportKeyDialog::keyChanged() {
   m_isTracking = isTrackingKeys(getKey());
-  if (m_isExport) {
-    setWindowTitle(m_isTracking ? tr("Export tracking key") : tr("Export key"));
-    if (m_isTracking) {
-      m_ui->m_descriptionLabel->setText(tr("Tracking key allows other people to see all incoming transactions of this wallet.\n"
-        "It doesn't allow spending your funds."));
-    } else if (m_isPrivateKeyExport) {
+  if (m_isTracking) {
+    setWindowTitle(tr("Export tracking key"));
+    m_ui->m_descriptionLabel->setText(tr("Tracking key allows other people to see all incoming transactions of this wallet.\n"
+      "It doesn't allow spending your funds."));
+  } else {
+    setWindowTitle(tr("Export key"));
+    if (m_isPrivateKeyExport) {
       m_ui->m_descriptionLabel->setText(tr("These keys allow restoration of your wallet in simplewallet."));
     } else {
       m_ui->m_descriptionLabel->clear();
-    }
-  } else {
-    if (m_isSeedImport) {
-       setWindowTitle(tr("Import mnemonic seed"));
-    } else {
-      setWindowTitle(m_isTracking ? tr("Import tracking key") : tr("Import key"));
-      if (m_isTracking) {
-        m_ui->m_descriptionLabel->setText(tr("Import a tracking key of a wallet to see all its incoming transactions.\n"
-          "It doesn't allow spending funds."));
-      } else {
-        m_ui->m_descriptionLabel->clear();
-      }
     }
   }
 }

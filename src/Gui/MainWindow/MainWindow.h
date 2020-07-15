@@ -118,6 +118,7 @@ private:
   void addRecipientTriggered();
   void commitData(QSessionManager& _manager);
   void walletStateModelDataChanged(const QModelIndex& _topLeft, const QModelIndex& _bottomRight, const QVector<int>& _roles);
+  void saveWallet(QByteArray key, bool _isTrackingKeys);
 
   Q_SLOT void createWallet();
   Q_SLOT void openWallet();
@@ -129,6 +130,8 @@ private:
   Q_SLOT void exportPrivateKeys();
   Q_SLOT void exportTrackingKey();
   Q_SLOT void importKey();
+  Q_SLOT void importTrackingKey();
+  Q_SLOT void importPrivateKeys();
   Q_SLOT void importSeed();
   Q_SLOT void aboutQt();
   Q_SLOT void about();
