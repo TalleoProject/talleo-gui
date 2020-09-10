@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -94,7 +95,7 @@ void OptimizationOptionsFrame::load() {
   m_ui->m_stopTimeEdit->setTime(m_optimizationManager->getOptimizationStopTime());
   int index = m_ui->m_periodCombo->findData(m_optimizationManager->getOptimizationInterval());
   if (index == -1) {
-    m_optimizationManager->setOptimizationInterval(1000 * 60 * 30);
+    m_optimizationManager->setOptimizationInterval(1000 * 60 * 5);
   }
 
   m_ui->m_periodCombo->setCurrentIndex(m_ui->m_periodCombo->findData(m_optimizationManager->getOptimizationInterval()));
@@ -144,17 +145,18 @@ void OptimizationOptionsFrame::setOptimizationManager(IOptimizationManager* _opt
 }
 
 void OptimizationOptionsFrame::initOptimizationPeriods() {
+  m_ui->m_periodCombo->addItem(tr("5 minutes"), 5 * MINUTE_MSECS);
+  m_ui->m_periodCombo->addItem(tr("10 minutes"), 10 * MINUTE_MSECS);
+  m_ui->m_periodCombo->addItem(tr("15 minutes"), 15 * MINUTE_MSECS);
+  m_ui->m_periodCombo->addItem(tr("20 minutes"), 20 * MINUTE_MSECS);
+  m_ui->m_periodCombo->addItem(tr("25 minutes"), 25 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("30 minutes"), 30 * MINUTE_MSECS);
+  m_ui->m_periodCombo->addItem(tr("45 minutes"), 45 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("1 hour"), HOUR_MSECS);
-  m_ui->m_periodCombo->addItem(tr("1.5 hours"), HOUR_MSECS + 30 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("2 hours"), 2 * HOUR_MSECS);
-  m_ui->m_periodCombo->addItem(tr("2.5 hours"), 2 * HOUR_MSECS + 30 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("3 hours"), 3 * HOUR_MSECS);
-  m_ui->m_periodCombo->addItem(tr("3.5 hours"), 3 * HOUR_MSECS + 30 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("4 hours"), 4 * HOUR_MSECS);
-  m_ui->m_periodCombo->addItem(tr("4.5 hours"), 4 * HOUR_MSECS + 30 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("5 hours"), 5 * HOUR_MSECS);
-  m_ui->m_periodCombo->addItem(tr("5.5 hours"), 5 * HOUR_MSECS + 30 * MINUTE_MSECS);
   m_ui->m_periodCombo->addItem(tr("6 hours"), 6 * HOUR_MSECS);
 }
 

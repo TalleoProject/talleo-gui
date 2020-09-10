@@ -69,9 +69,9 @@ const char OPTION_PRIVACY_PARAMS[] = "privacyParams";
 const char OPTION_PRIVACY_NEWS_ENABLED[] = "newsEnabled";
 
 const char DEFAULT_WALLET_FILE_NAME[] = "Talleo.wallet";
-const quint64 DEFAULT_OPTIMIZATION_PERIOD = 1000 * 60 * 30; // 30 minutes
+const quint64 DEFAULT_OPTIMIZATION_PERIOD = 1000 * 60 * 5; // 5 minutes
 const quint64 DEFAULT_OPTIMIZATION_THRESHOLD = 10000000000000;
-const quint64 DEFAULT_OPTIMIZATION_MIXIN = 6;
+const quint64 DEFAULT_OPTIMIZATION_MIXIN = 3;
 
 }
 
@@ -259,11 +259,11 @@ ConnectionMethod Settings::getConnectionMethod() const {
 bool Settings::isOptimizationEnabled() const {
   QReadLocker lock(&m_lock);
   if (!m_settings.contains(OPTION_WALLET_OPTIMIZATION)) {
-    return false;
+    return true;
   }
 
   QJsonObject optimizationObject = m_settings.value(OPTION_WALLET_OPTIMIZATION).toObject();
-  return optimizationObject.contains(OPTION_WALLET_OPTIMIZATION_ENABLED) ? optimizationObject.value(OPTION_WALLET_OPTIMIZATION_ENABLED).toBool() : false;
+  return optimizationObject.contains(OPTION_WALLET_OPTIMIZATION_ENABLED) ? optimizationObject.value(OPTION_WALLET_OPTIMIZATION_ENABLED).toBool() : true;
 }
 
 bool Settings::isFusionTransactionsVisible() const {
