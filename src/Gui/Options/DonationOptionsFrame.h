@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2020, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -62,8 +63,8 @@ private:
   Q_SLOT void donationChangeAmountChanged(double _value);
 
 Q_SIGNALS:
-  void showRestartWarningSignal(bool _show);
-  void disableAcceptButtonSignal(bool _disable);
+  void showRestartWarningSignal(bool _show) override;
+  void disableAcceptButtonSignal(bool _disable) override;
 };
 
 }
