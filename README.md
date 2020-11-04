@@ -107,7 +107,8 @@ windeployqt.exe TalleoWallet.exe
 
 You can find us at:
 
-[Discord](https://discord.gg/aysnp8P)
+* [Discord](https://discord.gg/aysnp8P)
+* [Telegram](https://t.me/Talleo)
 
 ## License
 
