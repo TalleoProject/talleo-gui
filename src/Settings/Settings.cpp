@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019-2020, The Talleo developers
+// Copyright (c) 2019-2021, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -85,6 +85,7 @@ Settings::Settings() : m_p2pBindPort(0), m_cmdLineParser(nullptr) {
   m_defaultPoolList << "pool.talleo.org:3333";
   m_defaultPoolList << "pool.raasu.org:3333";
   m_defaultPoolList << "tlo.cryptonote.club:3333";
+  m_defaultPoolList << "pool.letshash.it:1776";
 
   Style* lightStyle = new LightStyle();
   Style* darkStyle = new DarkStyle();
