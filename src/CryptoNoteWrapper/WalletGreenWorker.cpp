@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2021, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -33,6 +34,7 @@
 #include "Wallet/LegacyKeysImporter.h"
 #include "Wallet/WalletGreen.h"
 #include "Wallet/WalletErrors.h"
+#include "StringConverter.h"
 
 namespace WalletGui {
 
@@ -113,7 +115,7 @@ IWalletAdapter::WalletInitStatus WalletGreenWorker::create(const QString& _walle
     SemaphoreUnlocker unlocker(m_walletSemaphore);
     int errorCode = 0;
     try {
-      m_wallet->initialize(_walletPath.toStdString(), _password.toStdString());
+      m_wallet->initialize(convertQStringToStdString(_walletPath), convertQStringToStdString(_password));
       m_wallet->createAddress();
     } catch (const std::system_error& _error) {
       WalletLogger::critical(tr("[Wallet] Generate wallet error: %1").arg(_error.code().message().data()));
@@ -149,7 +151,7 @@ IWalletAdapter::WalletInitStatus WalletGreenWorker::load(const QString& _walletP
     int errorCode = 0;
     try {
       std::string userData;
-      m_wallet->load(_walletPath.toStdString(), _password.toStdString(), userData);
+      m_wallet->load(convertQStringToStdString(_walletPath), convertQStringToStdString(_password), userData);
 #if QT_VERSION <  0x050400
       m_userData = QByteArray(userData.data(), userData.size());
 #else
@@ -196,11 +198,11 @@ IWalletAdapter::WalletInitStatus WalletGreenWorker::loadLegacyKeys(const QString
     SemaphoreUnlocker unlocker(m_walletSemaphore);
     int errorCode = 0;
     try {
-      std::ofstream outputStream(_walletPath.toStdString(), std::ios::binary | std::ios::trunc);
-      CryptoNote::importLegacyKeys(_legacyKeysFile.toStdString(), _password.toStdString(), outputStream);
+      std::ofstream outputStream(convertQStringToStdString(_walletPath), std::ios::binary | std::ios::trunc);
+      CryptoNote::importLegacyKeys(convertQStringToStdString(_legacyKeysFile), convertQStringToStdString(_password), outputStream);
       outputStream.flush();
       outputStream.close();
-      m_wallet->load(_walletPath.toStdString(), _password.toStdString());
+      m_wallet->load(convertQStringToStdString(_walletPath), convertQStringToStdString(_password));
     } catch (const std::system_error& _error) {
       WalletLogger::critical(tr("[Wallet] Import keys from file error: %1").arg(_error.code().message().data()));
       errorCode = _error.code().value();
@@ -241,7 +243,7 @@ IWalletAdapter::WalletInitStatus WalletGreenWorker::createWithKeys(const QString
     SemaphoreUnlocker unlocker(m_walletSemaphore);
     int errorCode = 0;
     try {
-      m_wallet->initializeWithViewKey(_walletPath.toStdString(), "", _accountKeys.viewKeys.secretKey);
+      m_wallet->initializeWithViewKey(convertQStringToStdString(_walletPath), "", _accountKeys.viewKeys.secretKey);
       if (std::memcmp(&_accountKeys.spendKeys.secretKey, &CryptoNote::NULL_SECRET_KEY, sizeof(Crypto::SecretKey)) == 0) {
         m_wallet->createAddress(_accountKeys.spendKeys.publicKey);
       } else {
@@ -324,9 +326,9 @@ IWalletAdapter::WalletSaveStatus WalletGreenWorker::exportWallet(const QString& 
     int errorCode = 0;
     try {
 #if QT_VERSION < 0x050400
-      m_wallet->exportWallet(_path.toStdString(), _encrypt, _saveLevel, std::string(m_userData.data(), m_userData.size()));
+      m_wallet->exportWallet(convertQStringToStdString(_path), _encrypt, _saveLevel, std::string(m_userData.data(), m_userData.size()));
 #else
-      m_wallet->exportWallet(_path.toStdString(), _encrypt, _saveLevel, m_userData.toStdString());
+      m_wallet->exportWallet(convertQStringToStdString(_path), _encrypt, _saveLevel, m_userData.toStdString());
 #endif
     } catch (const std::system_error& _error) {
       WalletLogger::critical(tr("[Wallet] Export error: %1").arg(_error.code().message().data()));
@@ -353,7 +355,7 @@ IWalletAdapter::PasswordStatus WalletGreenWorker::changePassword(const QString& 
   m_dispatcher->remoteSpawn([this, &_oldPassword, &_newPassword, &errorCode]() {
     SemaphoreUnlocker unlocker(m_walletSemaphore);
     try {
-      m_wallet->changePassword(_oldPassword.toStdString(), _newPassword.toStdString());
+      m_wallet->changePassword(convertQStringToStdString(_oldPassword), convertQStringToStdString(_newPassword));
     } catch (const std::system_error& _error) {
       WalletLogger::critical(tr("[Wallet] Change password error: %1").arg(_error.code().message().data()));
       errorCode = _error.code().value();

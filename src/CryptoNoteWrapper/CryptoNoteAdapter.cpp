@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// COpyright (c) 2019, The Talleo developers
+// Copyright (c) 2019-2021, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -28,6 +28,7 @@
 #include "IBlockChainExplorerAdapter.h"
 #include "InProcessNodeAdapter.h"
 #include "ProxyRpcNodeAdapter.h"
+#include "StringConverter.h"
 
 #include "CryptoNoteCore/TransactionExtra.h"
 
@@ -402,7 +403,7 @@ void CryptoNoteAdapter::configureLogger(Logging::LoggerManager& _logger, const Q
   Common::JsonValue& cfgLoggers = loggerConfiguration.insert("loggers", Common::JsonValue::ARRAY);
   Common::JsonValue& fileLogger = cfgLoggers.pushBack(Common::JsonValue::OBJECT);
   fileLogger.insert("type", "file");
-  fileLogger.insert("filename", _logFilePath.toStdString());
+  fileLogger.insert("filename", convertQStringToStdString(_logFilePath));
   fileLogger.insert("level", static_cast<int64_t>(level));
   _logger.configure(loggerConfiguration);
 }
