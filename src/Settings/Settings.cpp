@@ -84,7 +84,6 @@ Settings& Settings::instance() {
 Settings::Settings() : m_p2pBindPort(0), m_cmdLineParser(nullptr) {
   m_defaultPoolList << "pool.talleo.org:3333";
   m_defaultPoolList << "pool.raasu.org:3333";
-  m_defaultPoolList << "tlo.cryptonote.club:3333";
 
   Style* lightStyle = new LightStyle();
   Style* darkStyle = new DarkStyle();
