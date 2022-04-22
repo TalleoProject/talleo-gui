@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -74,6 +75,7 @@ public:
   QStringList getRecentWalletList() const;
   QStringList getSeedNodes() const;
   QUrl getRemoteRpcUrl() const;
+  bool getRemoteRpcUseSSL() const;
   ConnectionMethod getConnectionMethod() const;
 
   bool isOptimizationEnabled() const;
@@ -96,6 +98,7 @@ public:
   void setConnectionMethod(ConnectionMethod _connectionMethod);
   void setLocalRpcPort(quint16 _port);
   void setRemoteRpcUrl(const QUrl& _url);
+  void setRemoteRpcUseSSL(bool _useSSL);
   void setP2pBindPort(quint16 _p2pBindPort);
   void setWalletFile(const QString& _file);
   void setCurrentTheme(const QString& _theme);

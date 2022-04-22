@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -48,7 +49,7 @@ public:
 
   // ICryptoNoteAdapter
   virtual int init(ConnectionMethod _connectionMethod, quint16 _localDaemonPort,
-    const QUrl& _remoteDaemonUrl) override;
+    const QUrl& _remoteDaemonUrl, bool _useSSL) override;
   virtual void deinit() override;
   virtual INodeAdapter* getNodeAdapter() const override;
   virtual bool isValidAddress(const QString& _address) const override;
@@ -85,6 +86,7 @@ private:
   ConnectionMethod m_connectionMethod;
   quint16 m_localDaemodPort;
   QUrl m_remoteDaemonUrl;
+  bool m_useSSL;
   Logging::LoggerManager m_coreLogger;
   Logging::LoggerManager m_walletLogger;
   CryptoNote::Currency m_currency;

@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -44,7 +45,7 @@ class ProxyRpcNodeWorker : public QObject, public INodeAdapter, public CryptoNot
 
 public:
   ProxyRpcNodeWorker(const CryptoNote::Currency& _currency, Logging::ILogger& _loggerManager, Logging::ILogger& _walletLogger,
-    const QString& _nodeHost, quint16 _nodePort, QObject* _parent);
+    const QString& _nodeHost, quint16 _nodePort, bool _useSSL, QObject* _parent);
   virtual ~ProxyRpcNodeWorker();
 
   // ICryptoNoteAdapter
@@ -74,6 +75,7 @@ private:
   Logging::ILogger& m_walletLogger;
   const QString m_nodeHost;
   const quint16 m_nodePort;
+  const bool m_useSSL;
   QScopedPointer<CryptoNote::NodeRpcProxy> m_node;
   QMap<INodeAdapterObserver*, QList<QMetaObject::Connection>> m_observerConnections;
 

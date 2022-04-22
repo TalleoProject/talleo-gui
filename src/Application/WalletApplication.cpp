@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018-2019, The Bittorium developers
-// COpyright (c) 2019-2020, The Talleo developers
+// COpyright (c) 2019-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -265,7 +265,7 @@ bool WalletApplication::initCryptoNoteAdapter() {
     }
 
     int initStatus = m_cryptoNoteAdapter->init(Settings::instance().getConnectionMethod(),
-      Settings::instance().getLocalRpcPort(), Settings::instance().getRemoteRpcUrl());
+      Settings::instance().getLocalRpcPort(), Settings::instance().getRemoteRpcUrl(), Settings::instance().getRemoteRpcUseSSL());
     switch (initStatus) {
     case INodeAdapter::INIT_SUCCESS: {
       return true;

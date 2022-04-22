@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -37,7 +38,7 @@ class ProxyRpcNodeAdapter : public CommonNodeAdapter {
 
 public:
   ProxyRpcNodeAdapter(const CryptoNote::Currency& _currency, Logging::ILogger& _loggerManager, Logging::ILogger& _walletLogger,
-    const QString& _nodeHost, quint16 _nodePort, QObject* _parent);
+    const QString& _nodeHost, quint16 _nodePort, bool _useSSL, QObject* _parent);
   virtual ~ProxyRpcNodeAdapter();
 
 protected:
@@ -49,6 +50,7 @@ private:
   Logging::ILogger& m_walletLogger;
   const QString m_nodeHost;
   quint16 m_nodePort;
+  bool m_useSSL;
 };
 
 }

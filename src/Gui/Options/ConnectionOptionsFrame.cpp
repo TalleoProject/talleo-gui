@@ -1,5 +1,6 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -78,6 +79,8 @@ void ConnectionOptionsFrame::load() {
     m_ui->m_remoteHostEdit->setText(remoteUrl.host());
     m_ui->m_remotePortSpin->setValue(remoteUrl.port());
   }
+  bool _useSSL = Settings::instance().getRemoteRpcUseSSL();
+  m_ui->m_remoteSSLCheck->setCheckState(_useSSL ? Qt::Checked : Qt::Unchecked);
 
   switch (Settings::instance().getConnectionMethod()) {
   case ConnectionMethod::AUTO:
@@ -101,6 +104,8 @@ void ConnectionOptionsFrame::save() {
   Settings::instance().setConnectionMethod(static_cast<ConnectionMethod>(m_ui->m_connectionButtonGroup->checkedId()));
   Settings::instance().setLocalRpcPort(m_ui->m_localPortSpin->value());
   Settings::instance().setRemoteRpcUrl(QUrl::fromUserInput(QString("%1:%2").arg(m_ui->m_remoteHostEdit->text()).arg(m_ui->m_remotePortSpin->value())));
+  bool _useSSL = m_ui->m_remoteSSLCheck->checkState() == Qt::Checked;
+  Settings::instance().setRemoteRpcUseSSL(_useSSL);
 }
 
 void ConnectionOptionsFrame::setData(const QVariantMap& _data) {

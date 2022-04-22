@@ -1,4 +1,5 @@
 // Copyright (c) 2015-2017, The Bytecoin developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -34,7 +35,7 @@ class ICryptoNoteAdapter {
 public:
   virtual ~ICryptoNoteAdapter() {}
 
-  virtual int init(ConnectionMethod _connectionMethod, quint16 _localDaemonPort, const QUrl& _remoteDaemonUrl) = 0;
+  virtual int init(ConnectionMethod _connectionMethod, quint16 _localDaemonPort, const QUrl& _remoteDaemonUrl, bool _useSSL) = 0;
   virtual void deinit() = 0;
 
   virtual INodeAdapter* getNodeAdapter() const = 0;

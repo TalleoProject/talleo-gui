@@ -27,7 +27,7 @@ git submodule foreach git pull origin master
 
 #### On Windows
 
-Dependencies: MSVC 2015 or later, CMake 2.8.6 or later, Boost 1.59 or later and QT 5.1 or later.
+Dependencies: MSVC 2015 or later, CMake 2.8.6 or later, Boost 1.59 or later, QT 5.1 or later, and OpenSSL.
 
 You may download them from:
 
@@ -57,7 +57,7 @@ And then build from within MSVC.
 
 #### On * nix / OS X
 
-Dependencies: CMake 2.8.6 or later, Boost 1.59 or later and QT 5.1 or later.
+Dependencies: CMake 2.8.6 or later, Boost 1.59 or later, QT 5.1 or later, and OpenSSL.
 
 You may download them from:
 

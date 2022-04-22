@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -24,15 +25,15 @@
 namespace WalletGui {
 
 ProxyRpcNodeAdapter::ProxyRpcNodeAdapter(const CryptoNote::Currency& _currency, Logging::ILogger& _loggerManager, Logging::ILogger& _walletLogger,
-  const QString& _nodeHost, quint16 _nodePort, QObject* _parent) : CommonNodeAdapter(_parent), m_currency(_currency),
-  m_loggerManager(_loggerManager), m_walletLogger(_walletLogger), m_nodeHost(_nodeHost), m_nodePort(_nodePort) {
+  const QString& _nodeHost, quint16 _nodePort, bool _useSSL, QObject* _parent) : CommonNodeAdapter(_parent), m_currency(_currency),
+  m_loggerManager(_loggerManager), m_walletLogger(_walletLogger), m_nodeHost(_nodeHost), m_nodePort(_nodePort), m_useSSL(_useSSL) {
 }
 
 ProxyRpcNodeAdapter::~ProxyRpcNodeAdapter() {
 }
 
 INodeAdapter* ProxyRpcNodeAdapter::createWorker() const {
-  return new ProxyRpcNodeWorker(m_currency, m_loggerManager, m_walletLogger, m_nodeHost, m_nodePort, nullptr);
+  return new ProxyRpcNodeWorker(m_currency, m_loggerManager, m_walletLogger, m_nodeHost, m_nodePort, m_useSSL, nullptr);
 }
 
 }

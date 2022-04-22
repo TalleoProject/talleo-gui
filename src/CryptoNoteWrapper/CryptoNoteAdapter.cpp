@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019-2021, The Talleo developers
+// Copyright (c) 2019-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -43,7 +43,7 @@ const char OLD_CORE_LOG_FILE_NAME[] = "TalleoWallet.log";
 
 CryptoNoteAdapter::CryptoNoteAdapter(const QDir& _dataDir, bool _testnet, bool _debug, QObject* _parent) : QObject(_parent),
   m_dataDir(_dataDir), m_testnet(_testnet), m_debug(_debug), m_connectionMethod(ConnectionMethod::AUTO),
-  m_localDaemodPort(CryptoNote::RPC_DEFAULT_PORT), m_remoteDaemonUrl(), m_coreLogger(), m_walletLogger(),
+  m_localDaemodPort(CryptoNote::RPC_DEFAULT_PORT), m_remoteDaemonUrl(), m_useSSL(false), m_coreLogger(), m_walletLogger(),
   m_currency(CryptoNote::CurrencyBuilder(m_coreLogger).currency()),
   m_nodeAdapter(nullptr), m_autoConnectionTimerId(-1) {
 }
@@ -52,11 +52,12 @@ CryptoNoteAdapter::~CryptoNoteAdapter() {
 }
 
 int CryptoNoteAdapter::init(ConnectionMethod _connectionMethod, quint16 _localDaemonPort,
-  const QUrl& _remoteDaemonUrl) {
+  const QUrl& _remoteDaemonUrl, bool _useSSL) {
   Q_ASSERT(m_nodeAdapter == nullptr);
   m_connectionMethod = _connectionMethod;
   m_localDaemodPort = _localDaemonPort;
   m_remoteDaemonUrl = _remoteDaemonUrl;
+  m_useSSL = _useSSL;
   QEventLoop initLoop;
   bool initCompleted = false;
   QMetaObject::Connection connection = connect(this, &CryptoNoteAdapter::initCompletedSignal, [&initLoop, &initCompleted](int _initStatus) {
@@ -361,7 +362,7 @@ void CryptoNoteAdapter::initNode() {
 
 void CryptoNoteAdapter::initAutoConnection() {
   WalletLogger::debug(tr("[CryptoNote wrapper] Searching local daemon: 127.0.0.1:%1").arg(CryptoNote::RPC_DEFAULT_PORT));
-  m_nodeAdapter = new ProxyRpcNodeAdapter(m_currency, m_coreLogger, m_walletLogger, "127.0.0.1", CryptoNote::RPC_DEFAULT_PORT, this);
+  m_nodeAdapter = new ProxyRpcNodeAdapter(m_currency, m_coreLogger, m_walletLogger, "127.0.0.1", CryptoNote::RPC_DEFAULT_PORT, false, this);
   m_nodeAdapter->addObserver(this);
   m_autoConnectionTimerId = startTimer(AUTO_CONNECTION_INTERVAL);
   m_nodeAdapter->init();
@@ -374,13 +375,13 @@ void CryptoNoteAdapter::initInProcessNode() {
 }
 
 void CryptoNoteAdapter::initLocalRpcNode() {
-  m_nodeAdapter = new ProxyRpcNodeAdapter(m_currency, m_coreLogger, m_walletLogger, "127.0.0.1", m_localDaemodPort, this);
+  m_nodeAdapter = new ProxyRpcNodeAdapter(m_currency, m_coreLogger, m_walletLogger, "127.0.0.1", m_localDaemodPort, false, this);
   m_nodeAdapter->addObserver(this);
   m_nodeAdapter->init();
 }
 
 void CryptoNoteAdapter::initRemoteRpcNode() {
-  m_nodeAdapter = new ProxyRpcNodeAdapter(m_currency, m_coreLogger, m_walletLogger, m_remoteDaemonUrl.host(), m_remoteDaemonUrl.port(), this);
+  m_nodeAdapter = new ProxyRpcNodeAdapter(m_currency, m_coreLogger, m_walletLogger, m_remoteDaemonUrl.host(), m_remoteDaemonUrl.port(), m_useSSL, this);
   m_nodeAdapter->addObserver(this);
   m_nodeAdapter->init();
 }

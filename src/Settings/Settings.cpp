@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019-2021, The Talleo developers
+// Copyright (c) 2019-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -50,6 +50,7 @@ const char OPTION_MINING_POOL_SWITCH_STRATEGY[] = "miningPoolSwitchStrategy";
 const char OPTION_NODE_CONNECTION_METHOD[] = "connectionMethod";
 const char OPTION_NODE_LOCAL_RPC_PORT[] = "localRpcPort";
 const char OPTION_NODE_REMOTE_RPC_URL[] = "remoteRpcUrl";
+const char OPTION_NODE_REMOTE_RPC_USE_SSL[] = "remoteRpcUseSSL";
 const char OPTION_WALLET_WALLET_FILE[] = "walletFile";
 const char OPTION_WALLET_ENCRYPTED[] = "encrypted";
 const char OPTION_WALLET_THEME[] = "theme";
@@ -390,6 +391,16 @@ QUrl Settings::getRemoteRpcUrl() const {
   return res;
 }
 
+bool Settings::getRemoteRpcUseSSL() const {
+  QReadLocker lock(&m_lock);
+  bool res = false;
+  if (m_settings.contains(OPTION_NODE_REMOTE_RPC_USE_SSL)) {
+    res = m_settings.value(OPTION_NODE_REMOTE_RPC_USE_SSL).toBool();
+  }
+
+  return res;
+}
+
 QString Settings::getMiningPoolSwitchStrategy(const QString& _defaultValue) const {
   QReadLocker lock(&m_lock);
   if (!m_settings.contains(OPTION_MINING_PARAMS)) {
@@ -549,6 +560,19 @@ void Settings::setRemoteRpcUrl(const QUrl& _url) {
     {
       QWriteLocker lock(&m_lock);
       m_settings.insert(OPTION_NODE_REMOTE_RPC_URL, QString("%1:%2").arg(_url.host()).arg(_url.port()));
+      saveSettings();
+    }
+
+    notifyObservers();
+  }
+}
+
+void Settings::setRemoteRpcUseSSL(bool _useSSL) {
+  bool oldUseSSL = getRemoteRpcUseSSL();
+  if (oldUseSSL != _useSSL) {
+    {
+      QWriteLocker lock(&m_lock);
+      m_settings.insert(OPTION_NODE_REMOTE_RPC_USE_SSL, _useSSL);
       saveSettings();
     }
 

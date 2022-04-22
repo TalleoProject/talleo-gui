@@ -55,6 +55,44 @@ endif ()
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
+# Force find_package(OpenSSL) to search the static library
+if(STATIC)
+  set(OPENSSL_USE_STATIC_LIBS ON)
+endif()
+if(MSVC)
+  set(OPENSSL_MSVC_STATIC_RT ON)
+endif()
+
+# We have to look for Homebrew OpenSSL a bit differently
+# Borrowed from https://github.com/tarantool/tarantool/commit/6eab201af1843f53a833c8928dc58fceffa08147
+if(APPLE)
+  find_program(HOMEBREW_EXECUTABLE brew)
+  execute_process(COMMAND ${HOMEBREW_EXECUTABLE} --prefix openssl
+    OUTPUT_VARIABLE HOMEBREW_OPENSSL
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(DEFINED HOMEBREW_OPENSSL)
+    if(NOT DEFINED OPENSSL_ROOT_DIR)
+      message(STATUS "Setting OpenSSL root to ${HOMEBREW_OPENSSL}")
+      set(OPENSSL_ROOT_DIR "${HOMEBREW_OPENSSL}")
+    endif()
+  endif()
+endif()
+
+find_package(OpenSSL)
+
+if(OPENSSL_FOUND)
+  ## On non MSVC build systems, we need to link ldl with the static OpenSSL library
+  if(NOT MSVC)
+    set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES};dl")
+  endif()
+
+  include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
+  message(STATUS "OpenSSL Found: ${OPENSSL_INCLUDE_DIR}")
+  message(STATUS "OpenSSL Libraries: ${OPENSSL_LIBRARIES}")
+else()
+  message(STATUS "OpenSSL Found: No... Skipping...")
+endif()
+
 set(VERSION "")
 configure_file("cryptonote/src/version.h.in" "version.h")
 configure_file("src/CryptoNoteWalletConfig.h.in" "CryptoNoteWalletConfig.h")
@@ -133,6 +171,7 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/System/EventLock.cpp
   cryptonote/src/System/InterruptedException.cpp
   cryptonote/src/System/Ipv4Address.cpp
+  cryptonote/src/System/SocketStream.cpp
   cryptonote/src/System/TcpStream.cpp
   cryptonote/src/JsonRpcServer/*.cpp
   cryptonote/src/PaymentGate/*.cpp
@@ -238,6 +277,19 @@ elseif (WIN32)
 endif (APPLE)
 
 qt5_use_modules(${PROJECT_NAME} Widgets Gui Network)
+
+if(OPENSSL_FOUND)
+    target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
+
+  # prevent error LNK2019: unresolved external symbol _vsnprintf
+  if(MSVC AND NOT (MSVC_VERSION LESS 1900))
+    target_link_libraries(${PROJECT_NAME} "legacy_stdio_definitions.lib")
+  endif()
+endif()
+
+if(MSVC)
+  target_link_libraries(${PROJECT_NAME} crypt32)
+endif()
 
 set(UPNPC_BUILD_TESTS OFF)
 set(UPNPC_BUILD_SHARED OFF)
