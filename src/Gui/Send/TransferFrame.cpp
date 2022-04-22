@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018-2019, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -19,6 +20,9 @@
 
 #include <QClipboard>
 #include <QCompleter>
+#include <QJsonDocument>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QStyle>
 #include <QWheelEvent>
 
@@ -65,6 +69,25 @@ TransferFrame::TransferFrame(QWidget* _parent) : QFrame(_parent), m_ui(new Ui::T
 }
 
 TransferFrame::~TransferFrame() {
+}
+
+void TransferFrame::resolveAddress(const QString& _email) {
+  QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+  QUrl url(QStringLiteral("https://wallet.talleo.org/getaddress.php?email=") + _email);
+  QNetworkRequest request(url);
+  request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+  QNetworkReply *reply = mgr->post(request, QByteArray());
+
+  QObject::connect(reply, &QNetworkReply::finished, [=](){
+    if(reply->error() == QNetworkReply::NoError){
+      QByteArray contents = reply->readAll();
+      QJsonDocument doc = QJsonDocument::fromJson(contents);
+      if (doc.object().value("address") != QJsonValue::Undefined) {
+        setAddress(doc.object().value("address").toString());
+      }
+    }
+    reply->deleteLater();
+  });
 }
 
 bool TransferFrame::readyToSend() const {
@@ -262,6 +285,10 @@ void TransferFrame::pasteClicked() {
 }
 
 void TransferFrame::addressChanged(const QString& _address) {
+  if (_address.contains("@")) {
+    resolveAddress(_address);
+    return;
+  }
   setAddressError(m_addressCompleter->currentCompletion().isEmpty() && !_address.isEmpty() &&
     !m_cryptoNoteAdapter->isValidAddress(_address));
   Q_EMIT addressChangedSignal(_address);
