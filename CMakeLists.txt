@@ -5,6 +5,10 @@ include(FeatureSummary)
 
 project(${CN_PROJECT_NAME})
 
+if(CMAKE_SYSTEM_NAME MATCHES "kFreeBSD.*|FreeBSD")
+  set(FREEBSD TRUE)
+endif()
+
 execute_process(COMMAND git log -1 --pretty=format:%h
 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 OUTPUT_VARIABLE GIT_REVISION)
@@ -254,8 +258,13 @@ elseif (UNIX)
     GET_TARGET_PROPERTY(QT_LIB_DIR "${Qt5Widgets_LIBRARIES}" LOCATION)
     GET_FILENAME_COMPONENT(QT_LIB_DIR "${QT_LIB_DIR}" PATH)
 
-  else(APPLE)
+  elseif(FREEBSD)
+    enable_language(ASM)
+    set(PLATFORM_DIR FreeBSD)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -maes -std=c++11")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -maes -std=c11")
 
+  else(APPLE)
     set(PLATFORM_DIR Linux)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -maes -std=c++11")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -maes -std=c11")
@@ -277,6 +286,10 @@ target_link_libraries(${PROJECT_NAME} rocksdb ${Boost_LIBRARIES} ${QTMAIN} ${CRY
 
 if (APPLE)
   qt5_use_modules(${PROJECT_NAME} PrintSupport)
+elseif (FREEBSD)
+  if (NOT HAVE_GETTIMEOFDAY)
+    target_link_libraries(${PROJECT_NAME} -lcompat)
+  endif()
 elseif (UNIX)
   target_link_libraries(${PROJECT_NAME} -lpthread)
 elseif (WIN32)

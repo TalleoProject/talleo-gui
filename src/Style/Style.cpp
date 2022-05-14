@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019, The Talleo developers
+// Copyright (c) 2019-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -137,6 +137,8 @@ QString Style::glassColor() const {
 QIcon Style::getSystemTrayIcon() const {
 #ifdef Q_OS_MAC
   return QIcon(":images/talleo_mac");
+#elif defined(Q_OS_FREEBSD)
+  return QIcon(":images/talleo_bsd");
 #elif defined(Q_OS_LINUX)
   return QIcon(":images/talleo_lin");
 #elif defined(Q_OS_WIN)

@@ -148,7 +148,7 @@ bool Settings::isSystemTrayAvailable() const {
   return false;
 #else
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
   if (QString(qVersion()) < "5.5.0") {
     return false;
   }
@@ -486,7 +486,7 @@ bool Settings::isStartOnLoginEnabled() const {
 
   QSettings autorunSettings(autorunFilePath, QSettings::NativeFormat);
   res = autorunSettings.value("RunAtLoad", false).toBool();
-#elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
   QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
   if (configPath.isEmpty()) {
     return false;
@@ -685,7 +685,7 @@ void Settings::setStartOnLoginEnabled(bool _enable) {
     autorunSettings.setValue("ProgramArguments", QVariantList() << QCoreApplication::applicationFilePath() << "--minimized");
     autorunSettings.setValue("RunAtLoad", _enable);
     autorunSettings.setValue("ProcessType", "InterActive");
-#elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_LINUX) || defined(Q_OS_FREEBSD)
     QString configPath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     if (configPath.isEmpty()) {
       return;

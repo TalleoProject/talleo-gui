@@ -98,6 +98,7 @@
     </qresource>
     <qresource prefix="/images">
         <file alias="splash">images/splash.png</file>
+        <file alias="talleo_bsd">images/Talleo.png</file>
         <file alias="talleo_lin">images/Talleo.png</file>
         <file alias="add_address_helper">images/add_address_helper.png</file>
         <file alias="talleo_mac">images/Talleo.icns</file>
