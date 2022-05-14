@@ -1,4 +1,5 @@
 // Copyright (c) 2015-2017, The Bytecoin developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -37,7 +38,7 @@ const char DBUS_FREEDESKTOP_SS_PATH[] = "/org/freedesktop/ScreenSaver";
 const char DBUS_FREEDESKTOP_SS_INTERFACE[] = "org.freedesktop.ScreenSaver";
 const char DBUS_FREEDESKTOP_SS_MEMBER[] = "ActiveChanged";
 
-const char PAYMENT_SERVER_NAME[] = "chavezcoin-payment-server-YrmF1jZEv5ahqXuD99d5H1jXQ";
+const char PAYMENT_SERVER_NAME[] = "talleo-payment-server-YrmF1jZEv5ahqXuD99d5H1jXQ";
 
 }
 
