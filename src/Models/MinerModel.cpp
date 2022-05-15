@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -44,7 +45,9 @@ MinerModel::MinerModel(IMiningManager* _miningManager, QObject* _parent) :
   QAbstractItemModel(_parent), m_miningManager(_miningManager), m_lastConnectionErrorTimerId(-1),
   m_columnCount(MinerModel::staticMetaObject.enumerator(MinerModel::staticMetaObject.indexOfEnumerator("Columns")).keyCount()) {
   m_miningManager->addObserver(this);
+#if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
   qsrand(QDateTime::currentDateTime().toMSecsSinceEpoch());
+#endif
 }
 
 MinerModel::~MinerModel() {

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2020, The Talleo developers
+// Copyright (c) 2020-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -18,6 +18,10 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <QtGlobal>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#include <QRandomGenerator>
+#endif
 #include <QReadWriteLock>
 #include <QThread>
 
@@ -96,11 +100,20 @@ void Worker::run() {
   Job localJob;
   quint32 localNonce;
   Crypto::Hash hash;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+  auto *generator = QRandomGenerator::global();
+#endif
   while (!m_isStopped) {
     bool alternateObserverExists = !m_alternateJob.jobId.isEmpty();
     if (m_alternateProbability == 0 || !alternateObserverExists) {
       mainJobMiningRound(localJob, localNonce, hash);
-    } else if (qrand() % 100 < (int)m_alternateProbability) {
+    } else if (
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+      generator->bounded(100)
+#else
+      qrand() % 100
+#endif
+      < (int)m_alternateProbability) {
       alternateJobMiningRound(localJob, localNonce, hash);
     } else {
       mainJobMiningRound(localJob, localNonce, hash);

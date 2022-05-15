@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -17,7 +18,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <QtGlobal>
 #include <QDateTime>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#include <QRandomGenerator>
+#endif
 #include <QThread>
 #include <QUrl>
 
@@ -321,7 +326,13 @@ void MiningManager::switchToNextPool() {
       m_miners[m_activeMinerIndex]->stop();
     }
 
-    nextMinerIndex = stoppedMinerIndexes.at(qrand() % stoppedMinerIndexes.size());
+    nextMinerIndex = stoppedMinerIndexes.at(
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+      QRandomGenerator::global()->bounded(stoppedMinerIndexes.size())
+#else
+      qrand() % stoppedMinerIndexes.size()
+#endif
+      );
     break;
   }
   }
