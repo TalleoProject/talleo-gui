@@ -109,7 +109,7 @@ QVariant MinerModel::data(const QModelIndex& _index, int _role) const {
 
 Qt::ItemFlags MinerModel::flags(const QModelIndex& _index) const {
   if (!_index.isValid()) {
-    return 0;
+    return Qt::NoItemFlags;
   }
 
   Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled;

@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -28,7 +29,11 @@ class WalletSplashScreen : public QSplashScreen {
   Q_DISABLE_COPY(WalletSplashScreen)
 
 public:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  explicit WalletSplashScreen();
+#else
   explicit WalletSplashScreen(QWidget* _parent);
+#endif
   ~WalletSplashScreen();
 
 protected:

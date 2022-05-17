@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -59,8 +60,12 @@ void JsonRpcServer::onNewConnection() {
   while (socket != nullptr) {
     qDebug("[JsonRpcServer] New connection from %s", qPrintable(socket->peerAddress().toString()));
     connect(socket, &QTcpSocket::disconnected, this, &JsonRpcServer::onSocketDisconneced);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    connect(socket, &QTcpSocket::errorOccurred, this, &JsonRpcServer::onSocketError);
+#else
     connect(socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error),
       this, &JsonRpcServer::onSocketError);
+#endif
     connect(socket, &QTcpSocket::readyRead, this, &JsonRpcServer::onSocketReadyRead);
     socket = nextPendingConnection();
   }
@@ -166,7 +171,12 @@ void JsonRpcServer::sendObject(QTcpSocket* _socket, const JsonRpcObject& _object
   Q_ASSERT(_object.isValid());
   Q_ASSERT(_socket != nullptr);
   QTextStream writeStream(_socket);
-  writeStream << _object.toString() << endl;
+  writeStream << _object.toString()
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+              << Qt::endl;
+#else
+              << endl;
+#endif
 }
 
 void JsonRpcServer::sendJson(QTcpSocket* _socket, const QJsonValue& _jsonValue) {
@@ -179,7 +189,12 @@ void JsonRpcServer::sendJson(QTcpSocket* _socket, const QJsonValue& _jsonValue) 
   }
 
   QTextStream writeStream(_socket);
-  writeStream << data << endl;
+  writeStream << data
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+              << Qt::endl;
+#else
+              << endl;
+#endif
 }
 
 }

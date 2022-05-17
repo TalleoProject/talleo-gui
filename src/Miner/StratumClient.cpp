@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -72,7 +73,11 @@ StratumClient::StratumClient(Job& _job, QReadWriteLock& _jobLock, std::atomic<qu
   m_connectionErrorCount(0), m_lastConnectionError() {
   connect(m_socket, &QTcpSocket::connected, this, &StratumClient::connectedToHost);
   connect(m_socket, &QTcpSocket::readyRead, this, &StratumClient::readyRead);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  connect(m_socket, &QTcpSocket::errorOccurred, this, &StratumClient::socketError);
+#else
   connect(m_socket, static_cast<void (QTcpSocket::*)(QTcpSocket::SocketError)>(&QTcpSocket::error), this, &StratumClient::socketError);
+#endif
 }
 
 StratumClient::~StratumClient() {

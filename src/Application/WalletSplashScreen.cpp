@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -49,8 +50,13 @@ const char HIDE_BUTTON_STYLE_SHEET_TEMPLATE[] =
 
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+WalletSplashScreen::WalletSplashScreen() :
+  QSplashScreen(QPixmap(":images/splash"), Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint) {
+#else
 WalletSplashScreen::WalletSplashScreen(QWidget* _parent) :
   QSplashScreen(_parent, QPixmap(":images/splash"), Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint) {
+#endif
   QFont font;
   font.setPixelSize(Style::FONT_LARGE);
   setFont(font);

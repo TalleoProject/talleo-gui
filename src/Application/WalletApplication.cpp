@@ -113,7 +113,7 @@ WalletApplication::WalletApplication(int& _argc, char** _argv) : QApplication(_a
       && !qEnvironmentVariableIsSet("QT_SCREEN_SCALE_FACTORS")) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   }
-#if QT_VERSION >= 0x050e00
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
   QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
   setApplicationName("TalleoWallet");
@@ -185,7 +185,11 @@ bool WalletApplication::init() {
   SignalHandler::instance().init();
   QObject::connect(&SignalHandler::instance(), &SignalHandler::quitSignal, this, &WalletApplication::quit);
   if (!Settings::instance().isRunMinimizedEnabled()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    m_splash = new WalletSplashScreen();
+#else
     m_splash = new WalletSplashScreen(nullptr);
+#endif
     initSystemTrayIcon();
   }
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// COpyright (c) 2019, The Talleo developers
+// COpyright (c) 2019-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -184,7 +184,11 @@ void BlogReader::getBlogRequest() {
   QNetworkRequest blogRequest(blogUrl);
 
   m_activeReply = m_networkManager->get(blogRequest);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  connect(m_activeReply, &QNetworkReply::errorOccurred, this, &BlogReader::blogReplyError);
+#else
   connect(m_activeReply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), this, &BlogReader::blogReplyError);
+#endif
   connect(m_activeReply, &QNetworkReply::finished, this, &BlogReader::blogReplyFinished);
   connect(m_activeReply, &QNetworkReply::readyRead, this, &BlogReader::blogReplyReadyRead);
 }
