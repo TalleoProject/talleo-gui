@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019-2021, The Talleo developers
+// Copyright (c) 2019-2022, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -50,8 +50,6 @@ CommandLineParser::CommandLineParser(QObject* _parent) : QObject(_parent), m_par
 #endif
   m_minimized("minimized", tr("Run application in minimized mode")) {
   m_parser.setApplicationDescription(tr("Talleo wallet"));
-  m_parser.addHelpOption();
-  m_parser.addVersionOption();
   m_parser.addOption(m_debugOption);
   m_parser.addOption(m_testnetOption);
   m_parser.addOption(m_p2pBindIpOption);
