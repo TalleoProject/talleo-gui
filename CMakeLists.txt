@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.6)
 include(CryptoNoteWallet.cmake)
+include(CheckSymbolExists)
+include(FeatureSummary)
 
 project(${CN_PROJECT_NAME})
 
@@ -20,6 +22,11 @@ include_directories(
   cryptonote/include
   cryptonote/src
 )
+
+check_symbol_exists(gettimeofday "sys/time.h" HAVE_GETTIMEOFDAY)
+if(HAVE_GETTIMEOFDAY)
+  add_definitions("-DHAVE_GETTIMEOFDAY")
+endif(HAVE_GETTIMEOFDAY)
 
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
