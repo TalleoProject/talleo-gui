@@ -7,25 +7,25 @@
     <x>0</x>
     <y>0</y>
     <width>908</width>
-    <height>160</height>
+    <height>220</height>
    </rect>
   </property>
   <property name="sizePolicy">
    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
-    <verstretch>150</verstretch>
+    <verstretch>210</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>160</height>
+    <height>220</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>160</height>
+    <height>220</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@
     </spacer>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QGridLayout" name="gridLayout" columnstretch="1,1,2,2,2,1">
      <property name="verticalSpacing">
       <number>5</number>
      </property>
@@ -87,6 +87,28 @@
        </property>
        <property name="indent">
         <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5" alignment="Qt::AlignBottom">
+      <widget class="WalletGui::WalletTinyLinkLikeButton" name="m_removeButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="text">
+        <string>Remove recipient</string>
+       </property>
+       <property name="flat">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -115,7 +137,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
+     <item row="0" column="2" colspan="3">
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -128,30 +150,31 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="3" alignment="Qt::AlignBottom">
-      <widget class="WalletGui::WalletTinyLinkLikeButton" name="m_removeButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="cursor">
-        <cursorShape>PointingHandCursor</cursorShape>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
+     <item row="2" column="0">
+      <widget class="WalletGui::WalletNormalGrayTextLabel" name="m_addressTextLabel">
        <property name="text">
-        <string>Remove recipient</string>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
+        <string>Address:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="4">
+     <item row="2" column="1" colspan="5">
       <widget class="WalletGui::ClearableLineEdit" name="m_sendAddressEdit">
+       <property name="styleSheet">
+        <string notr="true">[errorState=&quot;true&quot;] {
+  border-color: #ef3131;
+}</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="WalletGui::WalletNormalGrayTextLabel" name="m_emailTextLabel">
+       <property name="text">
+        <string>E-mail:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="5">
+      <widget class="WalletGui::ClearableLineEdit" name="m_sendEmailEdit">
        <property name="styleSheet">
         <string notr="true">[errorState=&quot;true&quot;] {
   border-color: #ef3131;
@@ -267,9 +290,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>m_sendAddressEdit</tabstop>
+  <tabstop>m_sendEmailEdit</tabstop>
   <tabstop>m_sendAmountSpin</tabstop>
   <tabstop>m_sendLabelEdit</tabstop>
-  <tabstop>m_addressBookButton</tabstop>
   <tabstop>m_removeButton</tabstop>
  </tabstops>
  <resources/>
@@ -281,8 +304,8 @@
    <slot>deleteLater()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>797</x>
-     <y>41</y>
+     <x>881</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -297,8 +320,8 @@
    <slot>addressBookClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>136</x>
-     <y>41</y>
+     <x>165</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -313,8 +336,8 @@
    <slot>labelOrAddressChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>445</x>
-     <y>56</y>
+     <x>566</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -329,8 +352,8 @@
    <slot>labelOrAddressChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>582</x>
-     <y>128</y>
+     <x>750</x>
+     <y>169</y>
     </hint>
     <hint type="destinationlabel">
      <x>445</x>
@@ -345,8 +368,8 @@
    <slot>amountStringChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>124</x>
-     <y>124</y>
+     <x>150</x>
+     <y>168</y>
     </hint>
     <hint type="destinationlabel">
      <x>453</x>
@@ -361,12 +384,28 @@
    <slot>addressChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>453</x>
-     <y>69</y>
+     <x>574</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>453</x>
      <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_sendEmailEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>TransferFrame</receiver>
+   <slot>emailChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>161</x>
+     <y>109</y>
     </hint>
    </hints>
   </connection>

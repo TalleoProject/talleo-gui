@@ -21,7 +21,6 @@
 #include <QClipboard>
 #include <QCompleter>
 #include <QJsonDocument>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QStyle>
 #include <QWheelEvent>
@@ -66,25 +65,49 @@ TransferFrame::TransferFrame(QWidget* _parent) : QFrame(_parent), m_ui(new Ui::T
   m_ui->setupUi(this);
   m_ui->m_sendAmountSpin->installEventFilter(this);
   setStyleSheet(Settings::instance().getCurrentStyle().makeStyleSheet(TRANSFER_FRAME_STYLE_SHEET_TEMPLATE));
+  m_manager = new QNetworkAccessManager(this);
 }
 
 TransferFrame::~TransferFrame() {
 }
 
 void TransferFrame::resolveAddress(const QString& _email) {
-  QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+  auto iter = m_resolvedAddresses.find(_email);
+  if (iter != m_resolvedAddresses.end()) {
+    m_lastResolvedAddress = iter.value();
+    if (m_lastResolvedAddress != getAddress()) {
+      setAddress(m_lastResolvedAddress);
+    }
+    setEmailError(false);
+    return;
+  }
   QUrl url(QStringLiteral("https://wallet.talleo.org/getaddress.php?email=") + _email);
   QNetworkRequest request(url);
   request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-  QNetworkReply *reply = mgr->post(request, QByteArray());
+  QNetworkReply *reply = m_manager->post(request, QByteArray());
 
   QObject::connect(reply, &QNetworkReply::finished, [=](){
     if(reply->error() == QNetworkReply::NoError){
       QByteArray contents = reply->readAll();
       QJsonDocument doc = QJsonDocument::fromJson(contents);
       if (doc.object().value("address") != QJsonValue::Undefined) {
-        setAddress(doc.object().value("address").toString());
+        m_lastResolvedAddress = doc.object().value("address").toString();
+        m_resolvedAddresses.insert(_email, m_lastResolvedAddress);
+        if (m_resolvedEmails.find(m_lastResolvedAddress) == m_resolvedEmails.end()) {
+          // Make sure two e-mail addresses don't map to same wallet address
+          m_resolvedEmails.insert(m_lastResolvedAddress, _email);
+          if (m_lastResolvedAddress != getAddress()) {
+            setAddress(m_lastResolvedAddress);
+          }
+          setEmailError(false);
+        } else {
+          setEmailError(true);
+        }
+      } else {
+        setEmailError(true);
       }
+    } else {
+      setEmailError(true);
     }
     reply->deleteLater();
   });
@@ -103,6 +126,10 @@ QString TransferFrame::getAmountString() const {
   return m_ui->m_sendAmountSpin->cleanText();
 }
 
+QString TransferFrame::getEmail() const {
+  return m_ui->m_sendEmailEdit->text().trimmed();
+}
+
 QString TransferFrame::getLabel() const {
   return m_ui->m_sendLabelEdit->text().trimmed();
 }
@@ -113,6 +140,10 @@ void TransferFrame::setAddress(const QString& _address) {
 
 void TransferFrame::setAmount(qreal _amount) {
   m_ui->m_sendAmountSpin->setValue(_amount);
+}
+
+void TransferFrame::setEmail(const QString& _email) {
+  m_ui->m_sendEmailEdit->setText(_email);
 }
 
 void TransferFrame::setLabel(const QString& _label) {
@@ -145,6 +176,14 @@ void TransferFrame::setAddressError(bool _error) {
   m_ui->m_payToTextLabel->style()->unpolish(m_ui->m_payToTextLabel);
   m_ui->m_payToTextLabel->style()->polish(m_ui->m_payToTextLabel);
   m_ui->m_payToTextLabel->update();
+}
+
+void TransferFrame::setEmailError(bool _error) {
+  m_ui->m_sendEmailEdit->setProperty("errorState", _error);
+
+  m_ui->m_sendEmailEdit->style()->unpolish(m_ui->m_sendEmailEdit);
+  m_ui->m_sendEmailEdit->style()->polish(m_ui->m_sendEmailEdit);
+  m_ui->m_sendEmailEdit->update();
 }
 
 void TransferFrame::setDuplicationError(bool _error) {
@@ -286,7 +325,7 @@ void TransferFrame::pasteClicked() {
 
 void TransferFrame::addressChanged(const QString& _address) {
   if (_address.contains("@")) {
-    resolveAddress(_address);
+    setEmail(_address);
     return;
   }
   setAddressError(m_addressCompleter->currentCompletion().isEmpty() && !_address.isEmpty() &&
@@ -294,9 +333,27 @@ void TransferFrame::addressChanged(const QString& _address) {
   Q_EMIT addressChangedSignal(_address);
 }
 
+void TransferFrame::emailChanged(const QString& _email) {
+  if (_email.contains("@")) {
+    resolveAddress(_email);
+  } else if (_email.isEmpty()) {
+    setEmailError(false);
+  } else {
+    setEmailError(true);
+  }
+}
+
 void TransferFrame::labelOrAddressChanged(const QString& _text) {
   QString label = getLabel().trimmed();
   QString address = getAddress().trimmed();
+  if (address != m_lastResolvedAddress || getEmail().isEmpty()) {
+    auto iter = m_resolvedEmails.find(address);
+    if (iter != m_resolvedEmails.end()) {
+      setEmail(iter.value());
+    } else {
+      m_ui->m_sendEmailEdit->clear();
+    }
+  }
   if (!label.isEmpty() && (m_addressBookManager->findAddressByAddress(address) != std::numeric_limits<quintptr>::max() ||
     m_addressBookManager->findAddressByLabel(label) != std::numeric_limits<quintptr>::max())) {
       setDuplicationError(true);

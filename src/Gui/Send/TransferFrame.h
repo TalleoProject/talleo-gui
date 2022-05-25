@@ -21,6 +21,7 @@
 #pragma once
 
 #include <QFrame>
+#include <QNetworkAccessManager>
 
 #include "Application/IWalletUiItem.h"
 
@@ -45,16 +46,19 @@ public:
   bool readyToSend() const;
   QString getAddress() const;
   QString getAmountString() const;
+  QString getEmail() const;
   QString getLabel() const;
 
   void setAddress(const QString& _address);
   void setAmount(qreal _amount);
+  void setEmail(const QString& _email);
   void setLabel(const QString& _label);
 
   void disableRemoveButton(bool _disable);
   void hideBorder();
 
   void setAddressError(bool _error = true);
+  void setEmailError(bool _error = true);
   void setDuplicationError(bool _error = true);
   void setAmountFormatError(bool _error = true);
   void setInsufficientFundsError(bool _error = true);
@@ -77,12 +81,17 @@ private:
   QWidget* m_mainWindow;
   QAbstractItemModel* m_addressBookModel;
   QCompleter* m_addressCompleter;
+  QNetworkAccessManager* m_manager;
+  QHash<QString, QString> m_resolvedAddresses;
+  QHash<QString, QString> m_resolvedEmails;
+  QString m_lastResolvedAddress;
 
   void resolveAddress(const QString& _email);
   void validateAmount(double _amount);
 
   Q_SLOT void amountStringChanged(const QString& _amountString);
   Q_SLOT void addressChanged(const QString& _address);
+  Q_SLOT void emailChanged(const QString& _email);
   Q_SLOT void labelOrAddressChanged(const QString& _text);
   Q_SLOT void addressBookClicked();
   Q_SLOT void pasteClicked();
