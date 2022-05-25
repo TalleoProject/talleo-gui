@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.3)
 include(CryptoNoteWallet.cmake)
 include(CheckSymbolExists)
 include(FeatureSummary)
@@ -59,10 +59,6 @@ else(WIN32)
 endif(WIN32)
 
 find_package(Boost 1.58 REQUIRED COMPONENTS date_time filesystem program_options regex serialization system thread chrono)
-if ((${Boost_MAJOR_VERSION} EQUAL 1) AND (${Boost_MINOR_VERSION} EQUAL 54))
-  message(SEND_ERROR "Boost version 1.58 is unsupported, more details are available here http://goo.gl/RrCFmA")
-endif ()
-
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -92,9 +88,11 @@ endif()
 find_package(OpenSSL)
 
 if(OPENSSL_FOUND)
-  ## On non MSVC build systems, we need to link ldl with the static OpenSSL library
-  if(NOT MSVC)
-    set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES};dl")
+  ## On non MSVC build systems, we need to link dl with the static OpenSSL library
+  if(CMAKE_DL_LIBS)
+    if(NOT CMAKE_DL_LIBS IN_LIST OPENSSL_LIBRARIES)
+      set(OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES};${CMAKE_DL_LIBS}")
+    endif()
   endif()
 
   include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
@@ -162,6 +160,7 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/P2p/*.cpp
   cryptonote/src/Rpc/*.cpp
   cryptonote/src/Serialization/*.cpp
+  cryptonote/src/System/PortMapping.cpp
   cryptonote/src/Transfers/BlockchainSynchronizer.cpp
   cryptonote/src/Transfers/SynchronizationState.cpp
   cryptonote/src/Transfers/TransfersConsumer.cpp
