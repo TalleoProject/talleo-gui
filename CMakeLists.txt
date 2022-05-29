@@ -184,8 +184,6 @@ file(GLOB_RECURSE CRYPTONOTE_SOURCES
   cryptonote/src/System/SocketStream.cpp
   cryptonote/src/System/TcpStream.cpp
   cryptonote/src/JsonRpcServer/*.cpp
-  cryptonote/src/PaymentGate/*.cpp
-  cryptonote/src/PaymentGateService/*.cpp
 )
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
