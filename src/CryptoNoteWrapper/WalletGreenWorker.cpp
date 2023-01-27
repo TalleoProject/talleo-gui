@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2021, The Talleo developers
+// Copyright (c) 2021-2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -379,6 +379,14 @@ IWalletAdapter::PasswordStatus WalletGreenWorker::changePassword(const QString& 
   return getPasswordStatus(errorCode);
 }
 
+void WalletGreenWorker::repair() {
+  Q_ASSERT(!m_wallet.isNull());
+  SemaphoreLocker locker(m_walletSemaphore);
+  Q_EMIT walletRepairStartedSignal();
+  m_wallet->repair();
+  WalletLogger::info(tr("[Wallet] Wallet repair finished"));
+}
+
 void WalletGreenWorker::close() {
   Q_ASSERT(!m_wallet.isNull());
   SemaphoreLocker locker(m_walletSemaphore);
@@ -703,6 +711,7 @@ void WalletGreenWorker::addObserver(IWalletAdapterObserver* _observer) {
   QObject* observerObject = dynamic_cast<QObject*>(_observer);
   m_observerConnections[_observer] << connect(this, SIGNAL(walletOpenedSignal()), observerObject, SLOT(walletOpened()), Qt::QueuedConnection);
   m_observerConnections[_observer] << connect(this, SIGNAL(walletOpenErrorSignal(int)), observerObject, SLOT(walletOpenError(int)), Qt::QueuedConnection);
+  m_observerConnections[_observer] << connect(this, SIGNAL(walletRepairStartedSignal()), observerObject, SLOT(walletRepairStarted()), Qt::QueuedConnection);
   m_observerConnections[_observer] << connect(this, SIGNAL(walletClosedSignal()), observerObject, SLOT(walletClosed()), Qt::QueuedConnection);
   m_observerConnections[_observer] << connect(this, SIGNAL(passwordChangedSignal()), observerObject, SLOT(passwordChanged()), Qt::QueuedConnection);
   m_observerConnections[_observer] << connect(this, SIGNAL(synchronizationProgressUpdatedSignal(quint32, quint32)), observerObject,

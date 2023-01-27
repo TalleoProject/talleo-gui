@@ -4,7 +4,7 @@
 #define PROJECT_NAME "@CN_CURRENCY_DISPLAY_NAME@ Wallet"
 #define PROJECT_COMPANY "Talleo Project"
 #define PROJECT_SITE "https://talleo.org/"
-#define PROJECT_COPYRIGHT "Copyright 2019-2020, The Talleo Developers"
+#define PROJECT_COPYRIGHT "Copyright 2019-@CN_BUILD_YEAR@, The Talleo Developers"
 #define APP_VER_MAJOR @CN_VERSION_MAJOR@
 #define APP_VER_MINOR @CN_VERSION_MINOR@
 #define APP_VER_REV @CN_VERSION_REVISION@

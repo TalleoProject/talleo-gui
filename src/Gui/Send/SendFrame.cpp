@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018-2019, The Bittorium developers
-// Copyright (c) 2020, The Talleo developers
+// Copyright (c) 2020-2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -194,6 +194,10 @@ void SendFrame::walletOpened() {
 }
 
 void SendFrame::walletOpenError(int _initStatus) {
+  // Do nothing
+}
+
+void SendFrame::walletRepairStarted() {
   // Do nothing
 }
 

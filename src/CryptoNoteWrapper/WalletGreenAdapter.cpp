@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -87,6 +88,13 @@ IWalletAdapter::WalletSaveStatus WalletGreenAdapter::exportWallet(const QString&
 IWalletAdapter::PasswordStatus WalletGreenAdapter::changePassword(const QString& _oldPassword, const QString& _newPassword) {
   Q_ASSERT(m_worker != nullptr);
   return m_worker->changePassword(_oldPassword, _newPassword);
+}
+
+
+void WalletGreenAdapter::repair() {
+  Q_ASSERT(m_worker != nullptr);
+  Q_EMIT walletRepairStarted();
+  m_worker->repair();
 }
 
 void WalletGreenAdapter::close() {
@@ -193,6 +201,7 @@ void WalletGreenAdapter::addObserver(IWalletAdapterObserver* _observer) {
   QObject* observerObject = dynamic_cast<QObject*>(_observer);
   connect(this, SIGNAL(walletOpenedSignal()), observerObject, SLOT(walletOpened()));
   connect(this, SIGNAL(walletOpenErrorSignal(int)), observerObject, SLOT(walletOpenError(int)));
+  connect(this, SIGNAL(walletRepairStartedSignal()), observerObject, SLOT(walletRepairStarted()));
   connect(this, SIGNAL(walletClosedSignal()), observerObject, SLOT(walletClosed()));
   connect(this, SIGNAL(passwordChangedSignal()), observerObject, SLOT(passwordChanged()));
   connect(this, SIGNAL(synchronizationProgressUpdatedSignal(quint32, quint32)), observerObject,
@@ -209,6 +218,7 @@ void WalletGreenAdapter::removeObserver(IWalletAdapterObserver* _observer) {
   QObject* observerObject = dynamic_cast<QObject*>(_observer);
   disconnect(this, SIGNAL(walletOpenedSignal()), observerObject, SLOT(walletOpened()));
   disconnect(this, SIGNAL(walletOpenErrorSignal(int)), observerObject, SLOT(walletOpenError(int)));
+  disconnect(this, SIGNAL(walletRepairStartedSignal()), observerObject, SLOT(walletRepairStarted()));
   disconnect(this, SIGNAL(walletClosedSignal()), observerObject, SLOT(walletClosed()));
   disconnect(this, SIGNAL(passwordChangedSignal()), observerObject, SLOT(passwordChanged()));
   disconnect(this, SIGNAL(synchronizationProgressUpdatedSignal(quint32, quint32)), observerObject,
@@ -227,6 +237,10 @@ void WalletGreenAdapter::walletOpened() {
 
 void WalletGreenAdapter::walletOpenError(int _initStatus) {
   Q_EMIT walletOpenErrorSignal(_initStatus);
+}
+
+void WalletGreenAdapter::walletRepairStarted() {
+  Q_EMIT walletRepairStartedSignal();
 }
 
 void WalletGreenAdapter::walletClosed() {

@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2020, The Talleo developers
+// Copyright (c) 2020-2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -161,6 +161,10 @@ void WalletStatusBar::walletOpened() {
 
 void WalletStatusBar::walletOpenError(int _initStatus) {
   m_walletIsSynchronized = false;
+}
+
+void WalletStatusBar::walletRepairStarted() {
+  showMessage(tr("Repairing wallet..."));
 }
 
 void WalletStatusBar::walletClosed() {

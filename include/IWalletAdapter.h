@@ -1,4 +1,5 @@
 // Copyright (c) 2015-2017, The Bytecoin developers
+// Copyright (c) 2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -46,6 +47,7 @@ public:
   virtual ~IWalletAdapterObserver() {}
   virtual void walletOpened() = 0;
   virtual void walletOpenError(int _initStatus) = 0;
+  virtual void walletRepairStarted() = 0;
   virtual void walletClosed() = 0;
   virtual void passwordChanged() = 0;
   virtual void synchronizationProgressUpdated(quint32 _current, quint32 _total) = 0;
@@ -82,6 +84,7 @@ public:
   virtual WalletSaveStatus save(CryptoNote::WalletSaveLevel _saveLevel, bool _saveUserData) = 0;
   virtual WalletSaveStatus exportWallet(const QString& _path, bool _encrypt, CryptoNote::WalletSaveLevel _saveLevel, bool _saveUserData) = 0;
   virtual PasswordStatus changePassword(const QString& _oldPassword, const QString& _newPassword) = 0;
+  virtual void repair() = 0;
   virtual void close() = 0;
 
   virtual bool isOpen() const = 0;

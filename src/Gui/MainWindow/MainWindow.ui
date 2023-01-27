@@ -844,7 +844,7 @@
      <x>0</x>
      <y>0</y>
      <width>1273</width>
-     <height>18</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -873,6 +873,7 @@
     <addaction name="m_recentWalletsAction"/>
     <addaction name="m_backupWalletAction"/>
     <addaction name="m_saveKeysAction"/>
+    <addaction name="m_repairAction"/>
     <addaction name="m_resetAction"/>
     <addaction name="menuImport"/>
     <addaction name="menuExport"/>
@@ -1066,6 +1067,11 @@
   <action name="m_reportIssueAction">
    <property name="text">
     <string>Report an issue</string>
+   </property>
+  </action>
+  <action name="m_repairAction">
+   <property name="text">
+    <string>Repair wallet</string>
    </property>
   </action>
   <action name="m_resetAction">
@@ -1587,6 +1593,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>m_repairAction</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>repairWallet()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>629</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>m_resetAction</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1669,6 +1691,7 @@
   <slot>importSeed()</slot>
   <slot>communityForumTriggered()</slot>
   <slot>reportIssueTriggered()</slot>
+  <slot>repairWallet()</slot>
   <slot>resetWallet()</slot>
   <slot>saveWalletKeys()</slot>
   <slot>exportKey()</slot>

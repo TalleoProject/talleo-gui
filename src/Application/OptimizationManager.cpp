@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -17,6 +18,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with Bytecoin.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <QApplication>
 #include <QTime>
 #include <QTimerEvent>
 
@@ -130,6 +132,10 @@ void OptimizationManager::walletOpenError(int _initStatus) {
   // Do nothing
 }
 
+void OptimizationManager::walletRepairStarted() {
+  // Do nothing
+}
+
 void OptimizationManager::walletClosed() {
   if (m_checkTimerId != -1) {
     killTimer(m_checkTimerId);
@@ -223,8 +229,11 @@ void OptimizationManager::optimize() {
     return;
   }
 
-  walletAdapter->createFusionTransaction(Settings::instance().getOptimizationThreshold(),
-    Settings::instance().getOptimizationMixin(), walletAdapter->getAddress(0));
+  quint64 threshold = Settings::instance().getOptimizationThreshold();
+  while ((walletAdapter->getOutputsToOptimizeCount(threshold) > 0) &&
+         walletAdapter->createFusionTransaction(threshold, Settings::instance().getOptimizationMixin(), walletAdapter->getAddress(0))) {
+    qApp->processEvents();
+  }
 }
 
 void OptimizationManager::ensureStarted() {

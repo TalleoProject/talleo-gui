@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2019-2020, The Talleo developers
+// Copyright (c) 2019-2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -253,6 +253,10 @@ void MainWindow::walletOpenError(int _initStatus) {
   }
 }
 
+void MainWindow::walletRepairStarted() {
+  // Do nothing
+}
+
 void MainWindow::walletClosed() {
   setClosedState();
 }
@@ -364,6 +368,7 @@ void MainWindow::closeEvent(QCloseEvent* _event) {
 }
 
 void MainWindow::setOpenedState() {
+  setWindowTitle(tr("Talleo Wallet %1 - %2").arg(Settings::instance().getVersion()).arg(QDir::toNativeSeparators(Settings::instance().getWalletFile())));
 
   QList<QAbstractButton*> toolButtons = m_ui->m_toolButtonGroup->buttons();
   for (const auto& button : toolButtons) {
@@ -374,6 +379,7 @@ void MainWindow::setOpenedState() {
   IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
   m_ui->m_backupWalletAction->setEnabled(true);
   m_ui->m_resetAction->setEnabled(true);
+  m_ui->m_repairAction->setEnabled(true);
   m_ui->m_exportTrackingKeyAction->setEnabled(true);
   m_ui->m_encryptWalletAction->setEnabled(!walletAdapter->isEncrypted());
   m_ui->m_changePasswordAction->setEnabled(walletAdapter->isEncrypted());
@@ -386,6 +392,8 @@ void MainWindow::setOpenedState() {
 }
 
 void MainWindow::setClosedState() {
+  setWindowTitle(tr("Talleo Wallet %1").arg(Settings::instance().getVersion()));
+
   QList<QAbstractButton*> toolButtons = m_ui->m_toolButtonGroup->buttons();
   for (const auto& button : toolButtons) {
     button->setChecked(false);
@@ -394,6 +402,7 @@ void MainWindow::setClosedState() {
 
   m_ui->m_backupWalletAction->setEnabled(false);
   m_ui->m_resetAction->setEnabled(false);
+  m_ui->m_repairAction->setEnabled(false);
   m_ui->m_exportTrackingKeyAction->setEnabled(false);
   m_ui->m_encryptWalletAction->setEnabled(false);
   m_ui->m_changePasswordAction->setEnabled(false);
@@ -462,7 +471,7 @@ void MainWindow::updateRecentWalletActions() {
   QStringList recentWallets = Settings::instance().getRecentWalletList();
   int recentWalletCount = qMin(recentWallets.size(), MAX_RECENT_WALLET_COUNT);
   for (int i = 0; i < recentWalletCount; ++i) {
-    m_recentWalletsActionList[i]->setText(recentWallets[i]);
+    m_recentWalletsActionList[i]->setText(QDir::toNativeSeparators(recentWallets[i]));
     m_recentWalletsActionList[i]->setData(recentWallets[i]);
     m_recentWalletsActionList[i]->setVisible(true);
   }
@@ -634,6 +643,18 @@ void MainWindow::saveWalletKeys() {
   }
 }
 
+void MainWindow::repairWallet() {
+  qApp->processEvents(); // Make sure GUI redraws once before repair starts
+  IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
+  Q_ASSERT(walletAdapter->isOpen());
+  walletAdapter->repair();
+  walletAdapter->save(CryptoNote::WalletSaveLevel::SAVE_ALL, true);
+  walletAdapter->removeObserver(this);
+  walletAdapter->close();
+  walletAdapter->addObserver(this);
+  m_ui->m_noWalletFrame->openWallet(Settings::instance().getWalletFile(), QString());
+}
+
 void MainWindow::resetWallet() {
   QuestionDialog dlg(tr("Reset wallet?"), tr("Reset wallet to re-synchronise its transactions and balance based\n"
     "on the blockchain data. This operation can take some time.\n"
@@ -645,8 +666,8 @@ void MainWindow::resetWallet() {
   IWalletAdapter* walletAdapter = m_cryptoNoteAdapter->getNodeAdapter()->getWalletAdapter();
   Q_ASSERT(walletAdapter->isOpen());
   QString fileName = Settings::instance().getWalletFile();
-  QDateTime currenctDateTime = QDateTime::currentDateTime();
-  fileName.append(QString(".%1.backup").arg(currenctDateTime.toString("yyyyMMddHHMMss")));
+  QDateTime _currentDateTime = QDateTime::currentDateTime();
+  fileName.append(QString(".%1.backup").arg(_currentDateTime.toString("yyyyMMddHHMMss")));
 
   walletAdapter->save(CryptoNote::WalletSaveLevel::SAVE_KEYS_ONLY, true);
   walletAdapter->removeObserver(this);

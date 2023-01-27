@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -230,6 +231,10 @@ void TransactionsModel::walletOpenError(int _initStatus) {
   // Do nothing
 }
 
+void TransactionsModel::walletRepairStarted() {
+  // Do nothing
+}
+
 void TransactionsModel::walletClosed() {
   ensureSyncTimerStopped();
   beginResetModel();
@@ -374,6 +379,8 @@ QVariant TransactionsModel::getDisplayRoleData(const QModelIndex &_index) const 
       return tr("Failed");
     } else if (transactionState == CryptoNote::WalletTransactionState::CANCELLED) {
       return tr("Cancelled");
+    } else if (transactionState == CryptoNote::WalletTransactionState::DELETED) {
+      return tr("Deleted");
     }
 
     quint32 transactionConfirmationCount = _index.data(ROLE_NUMBER_OF_CONFIRMATIONS).value<quint32>();

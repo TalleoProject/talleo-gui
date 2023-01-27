@@ -1,7 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
-// Copyright (c) 2020, The Talleo developers
+// Copyright (c) 2020-2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -62,6 +62,7 @@ public:
   // IWalletAdapterObserver
   Q_SLOT virtual void walletOpened() override;
   Q_SLOT virtual void walletOpenError(int _initStatus) override;
+  Q_SLOT virtual void walletRepairStarted() override;
   Q_SLOT virtual void walletClosed() override;
   Q_SLOT virtual void passwordChanged() override;
   Q_SLOT virtual void synchronizationProgressUpdated(quint32 _current, quint32 _total) override;
@@ -124,6 +125,7 @@ private:
   Q_SLOT void openWallet();
   Q_SLOT void backupWallet();
   Q_SLOT void saveWalletKeys();
+  Q_SLOT void repairWallet();
   Q_SLOT void resetWallet();
   Q_SLOT void encryptWallet();
   Q_SLOT void exportKey();

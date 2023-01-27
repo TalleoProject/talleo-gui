@@ -1,6 +1,7 @@
 // Copyright (c) 2015-2018, The Bytecoin developers
 // Copyright (c) 2018, The PinkstarcoinV2 developers
 // Copyright (c) 2018, The Bittorium developers
+// Copyright (c) 2023, The Talleo developers
 //
 // This file is part of Bytecoin.
 //
@@ -60,6 +61,7 @@ public:
   virtual WalletSaveStatus save(CryptoNote::WalletSaveLevel _saveLevel, bool _saveUserData) override;
   virtual WalletSaveStatus exportWallet(const QString& _path, bool _encrypt, CryptoNote::WalletSaveLevel _saveLevel, bool _saveUserData) override;
   virtual PasswordStatus changePassword(const QString& _oldPassword, const QString& _newPassword) override;
+  virtual void repair() override;
   virtual void close() override;
 
   virtual bool isOpen() const override;
@@ -113,6 +115,7 @@ private:
 Q_SIGNALS:
   void walletOpenedSignal();
   void walletOpenErrorSignal(int _initStatus);
+  void walletRepairStartedSignal();
   void walletClosedSignal();
   void passwordChangedSignal();
   void synchronizationProgressUpdatedSignal(quint32 _current, quint32 _total);
