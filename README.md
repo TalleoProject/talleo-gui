@@ -27,7 +27,7 @@ git submodule foreach git pull origin master
 
 #### On Windows
 
-Dependencies: MSVC 2015 or later, CMake 2.8.6 or later, Boost 1.59 or later, QT 5.1 or later, and OpenSSL.
+Dependencies: MSVC 2015 or later, CMake 3.7 or later, Boost 1.59 or later, QT 5.1 or later, and OpenSSL.
 
 You may download them from:
 
@@ -57,7 +57,7 @@ And then build from within MSVC.
 
 #### On * nix / OS X
 
-Dependencies: CMake 2.8.6 or later, Boost 1.59 or later, QT 5.1 or later, and OpenSSL.
+Dependencies: CMake 3.7 or later, Boost 1.59 or later, QT 5.1 or later, and OpenSSL.
 
 You may download them from:
 
@@ -86,9 +86,8 @@ mkdir build/appimage
 cp src/Talleo.desktop build/appimage
 cp src/images/Talleo.png build/appimage
 cp build/TalleoWallet build/appimage
-cd build/appimage
-linuxdeployqt-continuous-x86_64.AppImage Talleo.desktop -appimage -verbose=2 -always-overwrite -no-translations
-mv Talleo_Wallet-x86_64.AppImage ..
+cd build
+linuxdeployqt-continuous-x86_64.AppImage appimage/Talleo.desktop -appimage -verbose=2 -always-overwrite -no-translations
 ```
 
 ##### On OS X
