@@ -52,13 +52,10 @@ endif()
 include_directories(${Qt5DBus_INCLUDE_DIRS})
 
 set(Boost_USE_STATIC_LIBS ON)
-if(WIN32)
-  set(Boost_USE_STATIC_RUNTIME OFF)
-else(WIN32)
-  set(Boost_USE_STATIC_RUNTIME ON)
-endif(WIN32)
+set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(Boost 1.58 REQUIRED COMPONENTS date_time filesystem program_options regex serialization system thread chrono)
+add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -217,7 +214,7 @@ if (WIN32)
     message(FATAL_ERROR "Only MSVC is supported on this platform")
   endif ()
 
-  add_definitions(/D_CRT_SECURE_NO_WARNINGS /D_WINSOCK_DEPRECATED_NO_WARNINGS /D_WIN32_WINNT=0x0600 /DSTATICLIB)
+  add_definitions(/D_CRT_SECURE_NO_WARNINGS /D_WINSOCK_DEPRECATED_NO_WARNINGS /D_WIN32_WINNT=0x0600 /DSTATICLIB /DQT_NO_DEPRECATED_WARNINGS)
   include_directories(cryptonote/src/Platform/msc)
 
   set(PLATFORM_DIR Windows)
@@ -226,6 +223,8 @@ if (WIN32)
   set(QTMAIN Qt5::WinMain)
 
 elseif (UNIX)
+
+  add_definitions(-DQT_NO_DEPRECATED_WARNINGS)
 
   if (APPLE)
     enable_language(ASM)
@@ -268,6 +267,10 @@ elseif (UNIX)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -maes -std=c11")
   endif (APPLE)
 endif ()
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 18.0)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DBOOST_NO_CXX98_FUNCTION_BASE")
+endif()
 
 include_directories(cryptonote/src/Platform/${PLATFORM_DIR})
 file(GLOB PLATFORM_SOURCES cryptonote/src/Platform/${PLATFORM_DIR}/System/*)
