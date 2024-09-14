@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.7)
+
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.30")
+  cmake_policy(SET CMP0167 OLD)
+endif()
+
 include(CryptoNoteWallet.cmake)
 include(CheckSymbolExists)
 include(FeatureSummary)
@@ -278,15 +283,15 @@ set(CRYPTONOTE_SOURCES ${CRYPTONOTE_SOURCES} ${PLATFORM_SOURCES} ${CRYPTONOTE_PL
 
 add_library(${CRYPTONOTE_LIB} STATIC ${CRYPTONOTE_SOURCES})
 set_target_properties(${CRYPTONOTE_LIB} PROPERTIES COMPILE_DEFINITIONS _GNU_SOURCE)
-target_link_libraries(${CRYPTONOTE_LIB} rocksdb ${Boost_LIBRARIES} ${Qt5DBus_LIBRARIES} upnpc-static)
+target_link_libraries(${CRYPTONOTE_LIB} rocksdb ${Boost_LIBRARIES} Qt5::DBus upnpc-static)
 
 add_executable(${PROJECT_NAME} ${BUILD_PLATFORM} ${BUILD_RESOURCES} ${SOURCES} ${HEADERS} ${UIS} ${RCC})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS _GNU_SOURCE)
-target_link_libraries(${PROJECT_NAME} rocksdb ${Boost_LIBRARIES} ${QTMAIN} ${CRYPTONOTE_LIB} ${Qt5DBus_LIBRARIES} qrencode)
+target_link_libraries(${PROJECT_NAME} rocksdb ${Boost_LIBRARIES} ${QTMAIN} ${CRYPTONOTE_LIB} Qt5::DBus qrencode)
 
 if (APPLE)
-  qt5_use_modules(${PROJECT_NAME} PrintSupport)
+  target_link_libraries(${PROJECT_NAME} Qt5::PrintSupport)
 elseif (FREEBSD)
   if (NOT HAVE_GETTIMEOFDAY)
     target_link_libraries(${PROJECT_NAME} -lcompat)
@@ -297,7 +302,7 @@ elseif (WIN32)
   target_link_libraries(${PROJECT_NAME} rpcrt4.lib wtsapi32.lib  Imm32 Iphlpapi Winmm)
 endif (APPLE)
 
-qt5_use_modules(${PROJECT_NAME} Widgets Gui Network)
+target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Gui Qt5::Network)
 
 if(OPENSSL_FOUND)
     target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
